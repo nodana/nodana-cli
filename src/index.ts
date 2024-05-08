@@ -1,11 +1,12 @@
 #! /usr/bin/env node
 
-const { Command } = require("commander"); // add this line
+import { Command } from "commander";
+// const { Command } = require("commander");
+
 const program = new Command();
 
-const handleCreate = (str: string, options: any) => {
-  console.log(str);
-  console.log(options);
+const handleCreate = (password: string) => {
+  console.log(password);
 };
 
 program
