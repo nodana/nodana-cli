@@ -1,19 +1,36 @@
 #! /usr/bin/env node
 "use strict";
-const { Command } = require("commander"); // add this line
-const program = new Command();
-const handleCreate = (str, options) => {
-    console.log(str);
-    console.log(options);
-};
+Object.defineProperty(exports, "__esModule", { value: true });
+const commander_1 = require("commander");
+const commands_1 = require("./commands");
+const program = new commander_1.Command();
+program.name("nodana-cli").version("0.0.1").description("Nodana Command Line");
+// Exchange token for API key
 program
-    .name("nodana-cli")
-    .version("0.0.1")
-    .description("A CLI for running Phonenixd instances");
+    .command("exchange")
+    .description("Exchange token for API key")
+    .option("-t, --token <string>", "Token")
+    .action(commands_1.exchange);
+// List Containers
 program
-    .command("create")
-    .description("create a container")
-    .argument("<password>", "password")
-    .action(handleCreate);
+    .command("list")
+    .description("List running containers")
+    .requiredOption("-k, --key <string>", "API Key")
+    .action(commands_1.list);
+// Create Container
+// autoLiquidity
+// password
+// seed
+// webhook
+// webhookSecret
+program
+    .command("start")
+    .description("Create a new container")
+    .requiredOption("-k, --key <string>", "API Key")
+    .option("-p, --password <string>", "Phoenixd password")
+    .option("-s, --seed <string>", "Phoenixd seed")
+    .option("-a, --autoLiquidity <string>", "Phoenixd auto liquidity value (2m, 5m, 10m)")
+    .option("-w, --webhook <string>", "Phoenixd webhook url")
+    .action(commands_1.create);
 program.parse();
 //# sourceMappingURL=index.js.map
