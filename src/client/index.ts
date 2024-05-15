@@ -27,7 +27,13 @@ export const start = async (key: string, options: any) => {
   }
 };
 
-export const stop = async () => {};
+export const stop = async (key: string, id: string) => {
+  try {
+    return request(`/containers/${id}`, "DELETE", getAuthorizationHeader(key));
+  } catch (e: any) {
+    throw e;
+  }
+};
 
 export const list = async (key: string) => {
   try {

@@ -41,7 +41,14 @@ const start = (key, options) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.start = start;
-const stop = () => __awaiter(void 0, void 0, void 0, function* () { });
+const stop = (key, id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return (0, request_1.default)(`/containers/${id}`, "DELETE", getAuthorizationHeader(key));
+    }
+    catch (e) {
+        throw e;
+    }
+});
 exports.stop = stop;
 const list = (key) => __awaiter(void 0, void 0, void 0, function* () {
     try {

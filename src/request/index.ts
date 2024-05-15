@@ -20,8 +20,6 @@ export default async (
     }
 
     const response = await fetch(`${API_BASE_URL}${path}`, options);
-
-    console.log("Response", response.status);
     const json = await response.json();
 
     if (!response.ok) {

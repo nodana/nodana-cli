@@ -22,7 +22,6 @@ exports.default = (path, method, extraHeaders, data) => __awaiter(void 0, void 0
         const response = yield fetch(`${constants_1.API_BASE_URL}${path}`, options);
         console.log("Response", response.status);
         const json = yield response.json();
-        // console.log("JSON", json);
         if (!response.ok) {
             throw new Error(json.message);
         }
