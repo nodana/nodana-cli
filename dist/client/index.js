@@ -8,12 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.list = exports.stop = exports.start = exports.exchange = void 0;
-const request_1 = __importDefault(require("../request"));
+exports.list = exports.stop = exports.start = exports.exchange = exports.getAuthorizationHeader = void 0;
+const request_1 = require("../request");
 const getAuthorizationHeader = (key) => {
     const delimeter = ".";
     if (!key || !key.includes(delimeter))
@@ -23,9 +20,10 @@ const getAuthorizationHeader = (key) => {
         Authorization: `Basic ${btoa(`${username}:${password}`)}`,
     };
 };
+exports.getAuthorizationHeader = getAuthorizationHeader;
 const exchange = (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (token = "") {
     try {
-        return (0, request_1.default)("/keys", "POST", {}, { token });
+        return request_1.request._call("/keys", "POST", {}, { token });
     }
     catch (e) {
         throw e;
@@ -34,7 +32,7 @@ const exchange = (...args_1) => __awaiter(void 0, [...args_1], void 0, function*
 exports.exchange = exchange;
 const start = (key, options) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return (0, request_1.default)("/containers", "POST", getAuthorizationHeader(key), options);
+        return request_1.request._call("/containers", "POST", (0, exports.getAuthorizationHeader)(key), options);
     }
     catch (e) {
         throw e;
@@ -43,7 +41,7 @@ const start = (key, options) => __awaiter(void 0, void 0, void 0, function* () {
 exports.start = start;
 const stop = (key, id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return (0, request_1.default)(`/containers/${id}`, "DELETE", getAuthorizationHeader(key));
+        return request_1.request._call(`/containers/${id}`, "DELETE", (0, exports.getAuthorizationHeader)(key));
     }
     catch (e) {
         throw e;
@@ -52,7 +50,7 @@ const stop = (key, id) => __awaiter(void 0, void 0, void 0, function* () {
 exports.stop = stop;
 const list = (key) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return (0, request_1.default)("/containers", "GET", getAuthorizationHeader(key));
+        return request_1.request._call("/containers", "GET", (0, exports.getAuthorizationHeader)(key));
     }
     catch (e) {
         throw e;
