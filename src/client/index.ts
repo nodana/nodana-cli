@@ -1,6 +1,6 @@
-import request from "../request";
+import { request } from "../request";
 
-const getAuthorizationHeader = (key: string) => {
+export const getAuthorizationHeader = (key: string) => {
   const delimeter = ".";
   if (!key || !key.includes(delimeter)) return {};
 
@@ -13,7 +13,7 @@ const getAuthorizationHeader = (key: string) => {
 
 export const exchange = async (token: string = "") => {
   try {
-    return request("/keys", "POST", {}, { token });
+    return request._call("/keys", "POST", {}, { token });
   } catch (e: any) {
     throw e;
   }
@@ -21,7 +21,12 @@ export const exchange = async (token: string = "") => {
 
 export const start = async (key: string, options: any) => {
   try {
-    return request("/containers", "POST", getAuthorizationHeader(key), options);
+    return request._call(
+      "/containers",
+      "POST",
+      getAuthorizationHeader(key),
+      options
+    );
   } catch (e: any) {
     throw e;
   }
@@ -29,7 +34,11 @@ export const start = async (key: string, options: any) => {
 
 export const stop = async (key: string, id: string) => {
   try {
-    return request(`/containers/${id}`, "DELETE", getAuthorizationHeader(key));
+    return request._call(
+      `/containers/${id}`,
+      "DELETE",
+      getAuthorizationHeader(key)
+    );
   } catch (e: any) {
     throw e;
   }
@@ -37,7 +46,7 @@ export const stop = async (key: string, id: string) => {
 
 export const list = async (key: string) => {
   try {
-    return request("/containers", "GET", getAuthorizationHeader(key));
+    return request._call("/containers", "GET", getAuthorizationHeader(key));
   } catch (e: any) {
     throw e;
   }
