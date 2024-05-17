@@ -1,8 +1,11 @@
 #! /usr/bin/env node
 import { Command } from "commander";
+// import figlet from "figlet";
 import { start, exchange, list, stop } from "./commands";
 
 const program = new Command();
+
+// console.log(figlet.textSync("nodana cli"));
 
 program.name("nodana-cli").version("0.0.1").description("Nodana Command Line");
 

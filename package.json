@@ -16,10 +16,12 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^12.0.0",
-    "conf": "^12.0.0"
+    "conf": "^12.0.0",
+    "figlet": "^1.7.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.16",
+    "@types/figlet": "^1.5.8",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.12.10",
     "@types/sinon": "^17.0.3",

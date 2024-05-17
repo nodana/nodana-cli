@@ -1,4 +1,5 @@
 import * as client from "../client";
+import { error, success } from "../helpers/output";
 
 type Props = {
   key: string;
@@ -7,8 +8,15 @@ type Props = {
 export default async ({ key }: Props) => {
   try {
     const containers = await client.list(key);
-    console.log(containers);
+
+    if (containers.length === 0) {
+      return success("No containers running");
+    }
+
+    const [container] = containers;
+
+    success(`ID: ${container.id},  Created At: ${container.createdAt}`);
   } catch (e: any) {
-    console.log(e.message);
+    error(e.message);
   }
 };

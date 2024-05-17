@@ -1,4 +1,6 @@
+const chalk = require("chalk");
 import * as client from "../client";
+import { error, success } from "../helpers/output";
 
 type Props = {
   key: string;
@@ -11,8 +13,10 @@ type Props = {
 export default async ({ key, ...options }: Props) => {
   try {
     const container = await client.start(key, options);
-    console.log(container);
+    success(
+      `Container ${chalk.bold.underline(container.id)} is up and running 🚀`
+    );
   } catch (e: any) {
-    console.log(e.message);
+    error(e.message);
   }
 };

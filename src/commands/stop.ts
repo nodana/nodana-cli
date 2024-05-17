@@ -1,4 +1,5 @@
 import * as client from "../client";
+import { error, success } from "../helpers/output";
 
 type Options = {
   key: string;
@@ -6,12 +7,11 @@ type Options = {
 
 export default async (id: string, { key }: Options) => {
   try {
-    // if(!id) {
-    //   throw new Error('Id must be provided');
-    // }
     const result = await client.stop(key, id);
-    console.log(result);
+    if (result.deleted) {
+      success(`Container ${id} has been stopped`);
+    }
   } catch (e: any) {
-    console.log(e.message);
+    error(e.message);
   }
 };
