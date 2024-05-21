@@ -15,7 +15,13 @@ type Props = {
 
 export default async ({ key, ...options }: Props) => {
   try {
-    const apiKey = key || (await readFile());
+    let apiKey;
+
+    try {
+      apiKey = key || (await readFile());
+    } catch (e: any) {
+      throw new Error("Nodana config file not found");
+    }
 
     const confirmed = await promptly.confirm(
       chalk.yellow("Are you sure?[y/n]")
@@ -23,7 +29,7 @@ export default async ({ key, ...options }: Props) => {
 
     if (confirmed) {
       info("Creating container...");
-      await sleep(1000);
+      // await sleep(1000);
       const container = await client.start(apiKey, options);
 
       console.log("\n");

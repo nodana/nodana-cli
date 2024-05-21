@@ -10,7 +10,13 @@ type Options = {
 
 export default async (id: string, { key }: Options) => {
   try {
-    const apiKey = key || (await readFile());
+    let apiKey;
+
+    try {
+      apiKey = key || (await readFile());
+    } catch (e: any) {
+      throw new Error("Nodana config file not found");
+    }
 
     const confirmed = await promptly.confirm(
       chalk.yellow("Are you sure?[y/n]")
@@ -19,11 +25,10 @@ export default async (id: string, { key }: Options) => {
     if (confirmed) {
       info(`Deleting. Please wait...`);
       const result = await client.stop(apiKey, id);
-      if (result.deleted) {
-        console.log("\n");
-        info(`Container ${id} has been deleted`);
-        console.log("\n");
-      }
+      console.log("\n");
+      console.log(chalk.yellow("Deleted:"), result.deleted.toString());
+      console.log(chalk.yellow("Fee:"), `${result.fee}sats`);
+      console.log("\n");
     }
   } catch (e: any) {
     error(e.message);
