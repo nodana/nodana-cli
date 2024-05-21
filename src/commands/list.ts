@@ -4,7 +4,7 @@ import { error, info, success } from "../helpers/output";
 import { read as readFile } from "../helpers/file";
 
 type Props = {
-  key: string;
+  key?: string;
 };
 
 export default async ({ key }: Props) => {
@@ -31,8 +31,8 @@ export default async ({ key }: Props) => {
     console.log("\n");
     console.log(chalk.yellow("ID:"), container.id);
     console.log(chalk.yellow("Connection Url:"), container.connectionUrl);
-    console.log(chalk.yellow("CreatedAt"), container.createdAt);
-    console.log(chalk.yellow("Uptime"), `${container.uptime} minute(s)`);
+    console.log(chalk.yellow("Created"), `${container.uptime} minutes ago`);
+    console.log(chalk.yellow("Status"), container.status);
     console.log(chalk.yellow("Version"), container.version);
     console.log("\n");
   } catch (e: any) {

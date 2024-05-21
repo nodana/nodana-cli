@@ -32,6 +32,32 @@ export const create = async (key: string, options: any) => {
   }
 };
 
+export const start = async (key: string, id: string) => {
+  try {
+    return request._call(
+      `/containers/${id}/start`,
+      "POST",
+      getAuthorizationHeader(key),
+      {}
+    );
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+export const stop = async (key: string, id: string) => {
+  try {
+    return request._call(
+      `/containers/${id}/stop`,
+      "POST",
+      getAuthorizationHeader(key),
+      {}
+    );
+  } catch (e: any) {
+    throw e;
+  }
+};
+
 export const del = async (key: string, id: string) => {
   try {
     return request._call(

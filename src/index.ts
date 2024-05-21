@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 import { Command } from "commander";
 // import figlet from "figlet";
-import { create, del, exchange, list } from "./commands";
+import * as commands from "./commands";
 
 const program = new Command();
 
@@ -14,7 +14,7 @@ program
   .command("exchange")
   .description("Exchange token for API key")
   .option("-t, --token <string>", "Token")
-  .action(exchange);
+  .action(commands.exchange);
 
 program
   .command("create")
@@ -27,20 +27,33 @@ program
     "Phoenixd auto liquidity value (2m, 5m, 10m)"
   )
   .option("-w, --webhook <string>", "Phoenixd webhook url")
-  .action(create);
+  .action(commands.create);
+
+program
+  .command("start")
+  .description("Start a container")
+  .argument("<id>", "Id of container")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.start);
+
+program
+  .command("stop")
+  .description("Stop a container")
+  .argument("<id>", "Id of container")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.stop);
 
 program
   .command("delete")
   .description("Delete a container")
   .argument("<id>", "Id of container")
   .option("-k, --key <string>", "API Key")
-  .action(del);
+  .action(commands.del);
 
-// List Containers
 program
   .command("list")
   .description("List running containers")
   .option("-k, --key <string>", "API Key")
-  .action(list);
+  .action(commands.list);
 
 program.parse();

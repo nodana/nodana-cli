@@ -19,7 +19,6 @@ describe("commands/exchange", () => {
     clientStub.resolves({ key: "key-abc" });
 
     fileStub = sinon.stub(file, "write");
-    fileStub.resolves();
 
     consoleStub = sinon.stub(console, "log");
   });
