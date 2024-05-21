@@ -19,7 +19,7 @@ export const exchange = async (token: string = "") => {
   }
 };
 
-export const start = async (key: string, options: any) => {
+export const create = async (key: string, options: any) => {
   try {
     return request._call(
       "/containers",
@@ -32,7 +32,7 @@ export const start = async (key: string, options: any) => {
   }
 };
 
-export const stop = async (key: string, id: string) => {
+export const del = async (key: string, id: string) => {
   try {
     return request._call(
       `/containers/${id}`,

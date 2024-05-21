@@ -24,7 +24,7 @@ export default async (id: string, { key }: Options) => {
 
     if (confirmed) {
       info(`Deleting. Please wait...`);
-      const result = await client.stop(apiKey, id);
+      const result = await client.del(apiKey, id);
       console.log("\n");
       console.log(chalk.yellow("Deleted:"), result.deleted.toString());
       console.log(chalk.yellow("Fee:"), `${result.fee}sats`);

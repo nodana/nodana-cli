@@ -49,12 +49,12 @@ describe("client", () => {
     });
   });
 
-  describe("start", () => {
+  describe("create", () => {
     it("should call request with correct arguments", async () => {
       const options = {
         password: "12345",
       };
-      await client.start(apiKey, options);
+      await client.create(apiKey, options);
 
       expect(requestStub).to.have.been.calledWith(
         "/containers",
@@ -65,10 +65,10 @@ describe("client", () => {
     });
   });
 
-  describe("stop", () => {
+  describe("del", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "12345";
-      await client.stop(apiKey, containerId);
+      await client.del(apiKey, containerId);
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}`,
