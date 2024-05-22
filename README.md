@@ -4,11 +4,15 @@ This is the CLI tool from [Nodana](https://nodana.io). With this package you can
 
 To get started, install the package globally;
 
-`npm install nodana-cli -g`
+```sh
+npm install nodana-cli -g
+```
 
 Check that the installation was successful by running the following command in a terminal window:
 
-`nodana --help`
+```sh
+nodana --help
+```
 
 This should display the commands available to you.
 
@@ -24,13 +28,13 @@ You need an API key to use the CLI. As we are currently beta testing, you will n
 
 Exchange a token for an API key.
 
-```
+```sh
 $ nodana exchange
 ```
 
 Options
 
-```
+```sh
 -t <token>
 ```
 
@@ -42,13 +46,13 @@ Once you have successfully exchanged a token for an API key, the CLI will create
 
 Create and start a container.
 
-```
+```sh
 $ nodana create
 ```
 
 Options
 
-```
+```sh
 -p <password>
 -s <seed>
 -a <autoLiquidity>
@@ -60,7 +64,7 @@ Options
 
 Start a container that has been stopped.
 
-```
+```sh
 $ nodana start <containerId>
 ```
 
@@ -68,7 +72,7 @@ $ nodana start <containerId>
 
 Stop a container. If you would like to delete a container then you must stop it first.
 
-```
+```sh
 $ nodana stop <containerId>
 ```
 
@@ -76,7 +80,7 @@ $ nodana stop <containerId>
 
 List containers.
 
-```
+```sh
 $ nodana list
 ```
 
@@ -84,6 +88,6 @@ $ nodana list
 
 Delete a container.
 
-```
+```sh
 $ nodana delete <containerId>
 ```
