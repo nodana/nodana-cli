@@ -1,7 +1,9 @@
 {
   "name": "nodana-cli",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Run a phoenixd Lightning node in the cloud on Nodana",
+  "repository": "https://github.com/nodana/nodana-cli",
+  "homepage": "https://nodana.io",
   "main": "dist/index.js",
   "bin": {
     "nodana": "dist/index.js"
@@ -10,8 +12,16 @@
     "build": "npx tsc",
     "test": "mocha -r ts-node/register 'tests/**/*.ts'"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodana",
+    "phoenixd",
+    "phoenix",
+    "acinq"
+  ],
+  "files": [
+    "./dist"
+  ],
+  "author": "Nodana",
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.2",

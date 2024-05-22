@@ -27,6 +27,7 @@ program
     "Phoenixd auto liquidity value (2m, 5m, 10m)"
   )
   .option("-w, --webhook <string>", "Phoenixd webhook url")
+  .option("-x, --webhookSecret <string>", "Phoenixd webhook secret")
   .action(commands.create);
 
 program
