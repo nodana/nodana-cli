@@ -24,6 +24,7 @@ export default async (options: Props) => {
     console.log(chalk.yellow("ID:"), container.id);
     console.log(chalk.yellow("Connection Url:"), container.connectionUrl);
     console.log(chalk.yellow("Created"), `${container.created} minutes ago`);
+    console.log(chalk.yellow("Fee"), `${container.fee} sats`);
     console.log(chalk.yellow("Status"), container.status);
     console.log(chalk.yellow("Version"), container.version);
     console.log("\n");
