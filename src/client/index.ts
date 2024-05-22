@@ -1,6 +1,19 @@
 import { request } from "../request";
+import { read as readFile, write as writeFile } from "../helpers/file";
+import { CONF_FILE_NAME } from "../constants";
 
-export const getAuthorizationHeader = (key: string) => {
+export const getAuthKey = async (options: any) => {
+  if ("key" in options) return options.key;
+
+  try {
+    const key = await readFile();
+    return key;
+  } catch (e: any) {
+    throw new Error(`${CONF_FILE_NAME} not found`);
+  }
+};
+
+export const getAuthHeader = (key: string) => {
   const delimeter = ".";
   if (!key || !key.includes(delimeter)) return {};
 
@@ -13,31 +26,33 @@ export const getAuthorizationHeader = (key: string) => {
 
 export const exchange = async (token: string = "") => {
   try {
-    return request._call("/keys", "POST", {}, { token });
+    const response = await request._call("/keys", "POST", {}, { token });
+    await writeFile(response.key);
+
+    return response;
   } catch (e: any) {
     throw e;
   }
 };
 
-export const create = async (key: string, options: any) => {
+export const create = async (options: any) => {
+  const key = await getAuthKey(options);
+
   try {
-    return request._call(
-      "/containers",
-      "POST",
-      getAuthorizationHeader(key),
-      options
-    );
+    return request._call("/containers", "POST", getAuthHeader(key), options);
   } catch (e: any) {
     throw e;
   }
 };
 
-export const start = async (key: string, id: string) => {
+export const start = async (id: string, options: any) => {
+  const key = await getAuthKey(options);
+
   try {
     return request._call(
       `/containers/${id}/start`,
       "POST",
-      getAuthorizationHeader(key),
+      getAuthHeader(key),
       {}
     );
   } catch (e: any) {
@@ -45,12 +60,14 @@ export const start = async (key: string, id: string) => {
   }
 };
 
-export const stop = async (key: string, id: string) => {
+export const stop = async (id: string, options: any) => {
+  const key = await getAuthKey(options);
+
   try {
     return request._call(
       `/containers/${id}/stop`,
       "POST",
-      getAuthorizationHeader(key),
+      getAuthHeader(key),
       {}
     );
   } catch (e: any) {
@@ -58,21 +75,21 @@ export const stop = async (key: string, id: string) => {
   }
 };
 
-export const del = async (key: string, id: string) => {
+export const list = async (options: any) => {
+  const key = await getAuthKey(options);
+
   try {
-    return request._call(
-      `/containers/${id}`,
-      "DELETE",
-      getAuthorizationHeader(key)
-    );
+    return request._call("/containers", "GET", getAuthHeader(key));
   } catch (e: any) {
     throw e;
   }
 };
 
-export const list = async (key: string) => {
+export const del = async (id: string, options: any) => {
+  const key = await getAuthKey(options);
+
   try {
-    return request._call("/containers", "GET", getAuthorizationHeader(key));
+    return request._call(`/containers/${id}`, "DELETE", getAuthHeader(key));
   } catch (e: any) {
     throw e;
   }

@@ -4,7 +4,6 @@ import sinon, { SinonStub } from "sinon";
 import promptly from "promptly";
 
 import list from "../../src/commands/list";
-import * as file from "../../src/helpers/file";
 import * as client from "../../src/client";
 
 const expect = chai.expect;
@@ -20,7 +19,6 @@ const mockResponse = [
 describe("commands/list", () => {
   let promptlyStub: SinonStub;
   let clientStub: SinonStub;
-  let fileStub: SinonStub;
   let consoleStub: SinonStub;
 
   beforeEach(() => {
@@ -29,9 +27,6 @@ describe("commands/list", () => {
 
     clientStub = sinon.stub(client, "list");
     clientStub.resolves(mockResponse);
-
-    fileStub = sinon.stub(file, "read");
-    fileStub.resolves("file-key");
 
     consoleStub = sinon.stub(console, "log");
   });
@@ -44,15 +39,7 @@ describe("commands/list", () => {
     const key = "12345";
     await list({ key });
 
-    expect(clientStub).to.be.calledWith(key);
-    expect(consoleStub).to.be.called;
-  });
-
-  it("should read conf file if no option key provided", async () => {
-    await list({});
-
-    expect(fileStub).to.be.called;
-    expect(clientStub).to.be.calledWith("file-key");
+    expect(clientStub).to.be.calledWith({ key });
     expect(consoleStub).to.be.called;
   });
 });

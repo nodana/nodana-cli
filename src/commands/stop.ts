@@ -1,24 +1,18 @@
 const chalk = require("chalk");
 import * as client from "../client";
-import { error, info } from "../helpers/output";
-import { read as readFile } from "../helpers/file";
+import { error, info, success } from "../helpers/output";
+import { sleep } from "../helpers/date";
 
 type Options = {
   key?: string;
 };
 
-export default async (id: string, { key }: Options) => {
+export default async (id: string, options: Options) => {
   try {
-    let apiKey;
-
-    try {
-      apiKey = key || (await readFile());
-    } catch (e: any) {
-      throw new Error("Nodana config file not found");
-    }
-
     info(`Stopping. Please wait...`);
-    const result = await client.stop(apiKey, id);
+    const result = await client.stop(id, options);
+    await sleep(5000); // wait 5 seconds instead of blocking thread on api
+    success(`Container stopped ❌`);
     console.log("\n");
     console.log(chalk.yellow("ID:"), result.id);
     console.log(chalk.yellow("Status:"), result.status);

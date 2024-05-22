@@ -4,7 +4,6 @@ import sinon, { SinonStub } from "sinon";
 import promptly from "promptly";
 
 import del from "../../src/commands/delete";
-import * as file from "../../src/helpers/file";
 import * as client from "../../src/client";
 
 const expect = chai.expect;
@@ -17,15 +16,11 @@ const mockResponse = {
 describe("commands/delete", () => {
   let promptlyStub: SinonStub;
   let clientStub: SinonStub;
-  let fileStub: SinonStub;
   let consoleStub: SinonStub;
 
   beforeEach(() => {
     promptlyStub = sinon.stub(promptly, "confirm");
     promptlyStub.resolves(true);
-
-    fileStub = sinon.stub(file, "read");
-    fileStub.resolves("file-key");
 
     clientStub = sinon.stub(client, "del");
     clientStub.resolves(mockResponse);
@@ -42,16 +37,7 @@ describe("commands/delete", () => {
     const containerId = "container-1";
     await del(containerId, { key });
 
-    expect(clientStub).to.be.calledWith(key, containerId);
-    expect(consoleStub).to.be.called;
-  });
-
-  it("should read conf file if no option key provided", async () => {
-    const containerId = "container-1";
-    await del(containerId, {});
-
-    expect(fileStub).to.be.called;
-    expect(clientStub).to.be.calledWith("file-key", containerId);
+    expect(clientStub).to.be.calledWith(containerId, { key });
     expect(consoleStub).to.be.called;
   });
 });

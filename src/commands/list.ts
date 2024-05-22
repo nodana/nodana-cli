@@ -7,21 +7,13 @@ type Props = {
   key?: string;
 };
 
-export default async ({ key }: Props) => {
+export default async (options: Props) => {
   try {
-    let apiKey;
-
-    try {
-      apiKey = key || (await readFile());
-    } catch (e: any) {
-      throw new Error("Nodana config file not found");
-    }
-
-    const containers = await client.list(apiKey);
+    const containers = await client.list(options);
 
     if (containers.length === 0) {
       console.log("\n");
-      info("No containers running");
+      info("No containers created");
       console.log("\n");
       return;
     }
@@ -31,7 +23,7 @@ export default async ({ key }: Props) => {
     console.log("\n");
     console.log(chalk.yellow("ID:"), container.id);
     console.log(chalk.yellow("Connection Url:"), container.connectionUrl);
-    console.log(chalk.yellow("Created"), `${container.uptime} minutes ago`);
+    console.log(chalk.yellow("Created"), `${container.created} minutes ago`);
     console.log(chalk.yellow("Status"), container.status);
     console.log(chalk.yellow("Version"), container.version);
     console.log("\n");
