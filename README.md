@@ -28,13 +28,13 @@ You need an API key to use the CLI. As we are currently beta testing, you will n
 
 Exchange a token for an API key.
 
-```sh
-$ nodana exchange
+```
+nodana exchange
 ```
 
 Options
 
-```sh
+```
 -t <token>
 ```
 
@@ -46,13 +46,13 @@ Once you have successfully exchanged a token for an API key, the CLI will create
 
 Create and start a container.
 
-```sh
-$ nodana create
+```
+nodana create
 ```
 
 Options
 
-```sh
+```
 -p <password>
 -s <seed>
 -a <autoLiquidity>
@@ -64,30 +64,30 @@ Options
 
 Start a container that has been stopped.
 
-```sh
-$ nodana start <containerId>
+```
+nodana start <containerId>
 ```
 
 ### Stop
 
 Stop a container. If you would like to delete a container then you must stop it first.
 
-```sh
-$ nodana stop <containerId>
+```
+nodana stop <containerId>
 ```
 
 ### List
 
 List containers.
 
-```sh
-$ nodana list
+```
+nodana list
 ```
 
 ### Delete
 
 Delete a container.
 
-```sh
-$ nodana delete <containerId>
+```
+nodana delete <containerId>
 ```
