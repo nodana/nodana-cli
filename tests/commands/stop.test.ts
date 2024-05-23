@@ -3,6 +3,7 @@ import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 
 import stop from "../../src/commands/stop";
+import * as date from "../../src/helpers/date";
 import * as client from "../../src/client";
 
 const expect = chai.expect;
@@ -16,12 +17,16 @@ const mockResponse = {
 describe("commands/stop", () => {
   let clientStub: SinonStub;
   let consoleStub: SinonStub;
+  let dateStub: SinonStub;
 
   beforeEach(() => {
     clientStub = sinon.stub(client, "stop");
     clientStub.resolves(mockResponse);
 
     consoleStub = sinon.stub(console, "log");
+
+    dateStub = sinon.stub(date, "sleep");
+    dateStub.resolves();
   });
 
   afterEach(() => {
