@@ -28,7 +28,10 @@ program
   )
   .option("-w, --webhook <string>", "Phoenixd webhook url")
   .option("-x, --webhookSecret <string>", "Phoenixd webhook secret")
-  .option("-y, --accept", "Skip confirmation")
+  .option(
+    "-y, --accept",
+    "Skip confirmation and agree to Terms (https://nodana.io/terms)"
+  )
   .action(commands.create);
 
 program

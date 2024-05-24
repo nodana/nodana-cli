@@ -1,11 +1,11 @@
 # nodana-cli
 
-This is the CLI tool from [Nodana](https://nodana.io). With this package you can run an instace of [phoenixd](https://phoenix.acinq.co/server) on Nodana infrastructure. No personal details or credit cards required.
+This is the official CLI tool for [Nodana](https://nodana.io). With this package you can create instances of [phoenixd](https://phoenix.acinq.co/server) on Nodana infrastructure. No personal details or credit cards required. Sats / min pricing.
 
 To get started, install the package globally;
 
 ```sh
-npm install nodana-cli -g
+npm install @nodana/nodana-cli -g
 ```
 
 Check that the installation was successful by running the following command in a terminal window:
@@ -18,9 +18,7 @@ This should display the commands available to you.
 
 ## API Key
 
-You need an API key to use the CLI. As we are currently beta testing, you will need a token which you can exchange for an API key using the `exchange` command.
-
-> Tokens are available over Nostr. Check the Nodana website for the link.
+You need an API key to use the CLI. As we are currently beta testing, you will need a token which you can exchange for an API key using the `exchange` command. Tokens are available via Nostr. Send us a DM requesting a token and if there's a place left in our beta testing program then we will send you one.
 
 ## Commands
 

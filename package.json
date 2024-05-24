@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Run a phoenixd Lightning node in the cloud on Nodana",
   "repository": "https://github.com/nodana/nodana-cli",
-  "homepage": "https://nodana.io",
+  "homepage": "https://github.com/nodana/nodana-cli#readme",
   "main": "dist/index.js",
   "bin": {
     "nodana": "dist/index.js"
