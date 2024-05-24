@@ -4,7 +4,7 @@ import * as commands from "./commands";
 
 const program = new Command();
 
-program.name("nodana-cli").version("0.0.1").description("Nodana Command Line");
+program.name("nodana-cli").version("0.1.1").description("Nodana CLI");
 
 program
   .command("exchange")
@@ -14,7 +14,7 @@ program
 
 program
   .command("create")
-  .description("Create a container")
+  .description("create a container")
   .option("-k, --key <string>", "API Key")
   .option("-p, --password <string>", "Phoenixd password")
   .option("-s, --seed <string>", "Phoenixd seed")
@@ -32,21 +32,21 @@ program
 
 program
   .command("start")
-  .description("Start a container")
+  .description("start a container")
   .argument("<id>", "Id of container")
   .option("-k, --key <string>", "API Key")
   .action(commands.start);
 
 program
   .command("stop")
-  .description("Stop a container")
+  .description("stop a container")
   .argument("<id>", "Id of container")
   .option("-k, --key <string>", "API Key")
   .action(commands.stop);
 
 program
   .command("delete")
-  .description("Delete a container")
+  .description("delete a container")
   .argument("<id>", "Id of container")
   .option("-k, --key <string>", "API Key")
   .option("-y, --accept", "Skip confirmation")
@@ -54,7 +54,7 @@ program
 
 program
   .command("list")
-  .description("List running containers")
+  .description("list containers")
   .option("-k, --key <string>", "API Key")
   .action(commands.list);
 
