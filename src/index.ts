@@ -4,11 +4,11 @@ import * as commands from "./commands";
 
 const program = new Command();
 
-program.name("nodana-cli").version("0.1.2").description("Nodana CLI");
+program.name("nodana-cli").version("0.1.3").description("Nodana CLI");
 
 program
   .command("exchange")
-  .description("Exchange token for API key")
+  .description("exchange token for API key")
   .option("-t, --token <string>", "Token")
   .action(commands.exchange);
 

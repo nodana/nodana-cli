@@ -17,7 +17,5 @@ export default async ({ token }: Props) => {
 };
 
 const print = () => {
-  console.log("\n");
   success(`Api key created and saved to ${CONF_FILE_NAME}`);
-  console.log("\n");
 };

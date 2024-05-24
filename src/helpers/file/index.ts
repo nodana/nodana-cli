@@ -1,13 +1,9 @@
+import path from "path";
 const fs = require("fs").promises;
 import { CONF_FILE_NAME } from "../../constants";
 
-const getCwd = () => {
-  return process.cwd();
-};
-
-const getFilepath = () => {
-  return `${getCwd()}/${CONF_FILE_NAME}`;
-};
+const getFilepath = () =>
+  path.join(__dirname, "..", "..", "..", CONF_FILE_NAME);
 
 export const read = async () => {
   try {
