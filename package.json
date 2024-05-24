@@ -1,5 +1,5 @@
 {
-  "name": "@nodana/nodana-cli",
+  "name": "@nodana-io/nodana-cli",
   "version": "0.1.0",
   "description": "Run a phoenixd Lightning node in the cloud on Nodana",
   "repository": {

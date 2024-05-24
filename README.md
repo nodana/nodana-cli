@@ -5,7 +5,7 @@ This is the official CLI tool for [Nodana](https://nodana.io). With this package
 To get started, install the package globally;
 
 ```sh
-npm install @nodana/nodana-cli -g
+npm install @nodana-io/nodana-cli -g
 ```
 
 Check that the installation was successful by running the following command in a terminal window:
@@ -35,8 +35,6 @@ Options
 ```
 -t <token>
 ```
-
-### Authorisation
 
 Once you have successfully exchanged a token for an API key, the CLI will create a `.nodana.conf` file in the root of the package which will contain your API key. The key will automatically be included in all requests listed below. You can provide the API key manually by passing `-k <key>` if you prefer.
 
