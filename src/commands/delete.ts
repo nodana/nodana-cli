@@ -32,7 +32,10 @@ export default async (id: string, options: Options) => {
 const print = (data: any) => {
   info(`Container deleted ❌`);
   console.log("\n");
-  console.log(chalk.yellow("Fee:"), `${data.fee} sats`);
-  console.log(chalk.yellow("Sats Remaining:"), `${data.satsRemaining} sats`);
+  console.log(chalk.yellow("Fee:"), `${data.fee.toLocaleString()} sats`);
+  console.log(
+    chalk.yellow("Sats Remaining:"),
+    `${data.satsRemaining.toLocaleString()} sats`
+  );
   console.log("\n");
 };

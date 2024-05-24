@@ -4,7 +4,7 @@ import * as commands from "./commands";
 
 const program = new Command();
 
-program.name("nodana-cli").version("0.1.3").description("Nodana CLI");
+program.name("nodana-cli").version("0.1.4").description("Nodana CLI");
 
 program
   .command("exchange")
