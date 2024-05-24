@@ -9,13 +9,18 @@ type Options = {
 export default async (id: string, options: Options) => {
   try {
     info(`Starting. Please wait...`);
-    const result = await client.start(id, options);
-    success(`Container started 🚀`);
-    console.log("\n");
-    console.log(chalk.yellow("ID:"), result.id);
-    console.log(chalk.yellow("Status:"), result.status);
-    console.log("\n");
+    const response = await client.start(id, options);
+
+    print(response);
   } catch (e: any) {
     error(e.message);
   }
+};
+
+const print = (data: any) => {
+  success(`Container started 🚀`);
+  console.log("\n");
+  console.log(chalk.yellow("ID:"), data.id);
+  console.log(chalk.yellow("Status:"), data.status);
+  console.log("\n");
 };

@@ -28,6 +28,7 @@ program
   )
   .option("-w, --webhook <string>", "Phoenixd webhook url")
   .option("-x, --webhookSecret <string>", "Phoenixd webhook secret")
+  .option("-y, --accept", "Skip confirmation")
   .action(commands.create);
 
 program
@@ -49,6 +50,7 @@ program
   .description("Delete a container")
   .argument("<id>", "Id of container")
   .option("-k, --key <string>", "API Key")
+  .option("-y, --accept", "Skip confirmation")
   .action(commands.del);
 
 program

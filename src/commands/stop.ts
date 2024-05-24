@@ -1,25 +1,30 @@
 const chalk = require("chalk");
 import * as client from "../client";
-import { error, info, success } from "../helpers/output";
+import { error, info } from "../helpers/output";
 import { sleep } from "../helpers/date";
 
 type Options = {
   key?: string;
 };
 
-const FAKE_DELAY = 5000;
+const DELAY = 5000;
 
 export default async (id: string, options: Options) => {
   try {
     info(`Stopping. Please wait...`);
-    const result = await client.stop(id, options);
-    await sleep(FAKE_DELAY); // wait 5 seconds instead of blocking thread on api
-    success(`Container stopped ❌`);
-    console.log("\n");
-    console.log(chalk.yellow("ID:"), result.id);
-    console.log(chalk.yellow("Status:"), result.status);
-    console.log("\n");
+    const response = await client.stop(id, options);
+    await sleep(DELAY); // wait 5 seconds instead of blocking thread on api
+
+    print(response);
   } catch (e: any) {
     error(e.message);
   }
+};
+
+const print = (data: any) => {
+  info(`Container stopped ❌`);
+  console.log("\n");
+  console.log(chalk.yellow("ID:"), data.id);
+  console.log(chalk.yellow("Status:"), data.status);
+  console.log("\n");
 };
