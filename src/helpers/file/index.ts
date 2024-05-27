@@ -3,7 +3,7 @@ const fs = require("fs").promises;
 import { CONF_FILE_NAME } from "../../constants";
 
 const getFilepath = () =>
-  path.join(__dirname, "..", "..", "..", CONF_FILE_NAME);
+  path.join(__dirname, "..", "..", "..", "..", CONF_FILE_NAME);
 
 export const read = async () => {
   try {
