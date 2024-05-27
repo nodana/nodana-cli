@@ -4,13 +4,16 @@ import * as commands from "./commands";
 
 const program = new Command();
 
-program.name("nodana-cli").version("0.1.4").description("Nodana CLI");
+program.name("nodana-cli").version("0.2.0").description("Nodana CLI");
 
 program
-  .command("exchange")
-  .description("exchange token for API key")
-  .option("-t, --token <string>", "Token")
-  .action(commands.exchange);
+  .command("init")
+  .description("create an API key")
+  .option(
+    "-y, --accept",
+    "Accept Nodana's terms and conditions (https://nodana.io/terms)"
+  )
+  .action(commands.init);
 
 program
   .command("create")
@@ -24,10 +27,7 @@ program
   )
   .option("-w, --webhook <string>", "Phoenixd webhook url")
   .option("-x, --webhookSecret <string>", "Phoenixd webhook secret")
-  .option(
-    "-y, --accept",
-    "Skip confirmation and agree to Terms (https://nodana.io/terms)"
-  )
+  .option("-y, --accept", "Skip confirmation")
   .action(commands.create);
 
 program

@@ -29,26 +29,19 @@ describe("client", () => {
     authHeader = {};
   });
 
-  describe("exchange", () => {
+  describe("init", () => {
     beforeEach(() => {
       requestStub.resolves({ key: "12345" });
     });
 
     it("should call request with correct arguments", async () => {
-      const token = "12345";
-      await client.exchange(token);
+      await client.init();
 
-      expect(requestStub).to.have.been.calledWith(
-        "/keys",
-        "POST",
-        {},
-        { token }
-      );
+      expect(requestStub).to.have.been.calledWith("/keys", "POST", {}, {});
     });
 
     it("should write key in response to file", async () => {
-      const token = "12345";
-      await client.exchange(token);
+      await client.init();
 
       expect(writeFileStub).to.have.been.calledWith("12345");
     });

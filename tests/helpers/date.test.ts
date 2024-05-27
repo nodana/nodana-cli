@@ -6,7 +6,7 @@ chai.use(sinonChai);
 
 import { getDurationString } from "../../src/helpers/date";
 
-describe.only("date helper", () => {
+describe("date helper", () => {
   describe("When mins is not a number", () => {
     it("should return not available string", () => {
       // @ts-ignore

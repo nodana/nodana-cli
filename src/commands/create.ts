@@ -17,9 +17,7 @@ export default async (options: Props) => {
     const confirmed =
       !!options.accept ||
       (await promptly.confirm(
-        chalk.yellow(
-          "By continuing, you confirm you have read and accept our Terms (https://nodana.io/terms). Continue?[y/n]"
-        )
+        chalk.yellow("You are about to create a container. Are you sure?[y/n]")
       ));
 
     if (confirmed) {

@@ -24,9 +24,9 @@ export const getAuthHeader = (key: string) => {
   };
 };
 
-export const exchange = async (token: string = "") => {
+export const init = async () => {
   try {
-    const response = await request._call("/keys", "POST", {}, { token });
+    const response = await request._call("/keys", "POST", {}, {});
     await writeFile(response.key);
 
     return response;
