@@ -16,27 +16,23 @@ nodana --help
 
 This should display the commands available to you.
 
-## API Key
-
-You need an API key to use the CLI. As we are currently beta testing, you will need a token which you can exchange for an API key using the `exchange` command. Tokens are available via Nostr. Send us a DM requesting a token and if there's a place left in our beta testing program then we will send you one.
-
 ## Commands
 
-### Exchange
+### Init
 
-Exchange a token for an API key.
+Get an API key. Keys are currently limited due to beta testing.
 
 ```
-nodana exchange
+nodana init
 ```
 
 Options
 
 ```
--t <token>
+-y (auto accept Nodana's terms and conditions)
 ```
 
-Once you have successfully exchanged a token for an API key, the CLI will create a `.nodana.conf` file in the root of the package which will contain your API key. The key will automatically be included in all requests listed below. You can provide the API key manually by passing `-k <key>` if you prefer.
+After calling `nodana init`, the CLI will create a `.nodana.conf` file in the root of the package which will contain your API key. The key will automatically be included in all requests listed below. You can provide the API key manually by passing `-k <key>` if you prefer.
 
 ### Create
 
