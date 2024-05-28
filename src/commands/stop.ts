@@ -22,7 +22,7 @@ export default async (id: string, options: Options) => {
 };
 
 const print = (data: any) => {
-  info(`Container stopped ❌`);
+  info(`Container stopped`);
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
   console.log(chalk.yellow("Status:"), data.status);

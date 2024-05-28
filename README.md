@@ -32,7 +32,7 @@ Options
 -y (auto accept Nodana's terms and conditions)
 ```
 
-After calling `nodana init`, the CLI will create a `.nodana.conf` file in the root of the package which will contain your API key. The key will automatically be included in all requests listed below. You can provide the API key manually by passing `-k <key>` if you prefer.
+After calling `nodana init`, the CLI will save your API key in a file called `.nodana.conf`. The key will automatically be included in all requests listed below. You can override this by providing the API key manually using the `-k <key>` option.
 
 ### Create
 
@@ -82,4 +82,12 @@ Delete a container.
 
 ```
 nodana delete <containerId>
+```
+
+### Status (coming soon)
+
+Check how many sats you have remaining.
+
+```
+nodana status
 ```

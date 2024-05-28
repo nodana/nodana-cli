@@ -1,6 +1,6 @@
 const chalk = require("chalk");
 import * as client from "../client";
-import { error, info, success } from "../helpers/output";
+import { error, info } from "../helpers/output";
 import { getDurationString } from "../helpers/date";
 
 type Props = {
@@ -16,23 +16,23 @@ export default async (options: Props) => {
       return;
     }
 
-    const [container] = containers;
-    print(container);
+    print(containers);
   } catch (e: any) {
     error(e.message);
   }
 };
 
-const print = (data: any) => {
-  console.log("\n");
-  console.log(chalk.yellow("ID:"), data.id);
-  console.log(chalk.yellow("Connection Url:"), data.connectionUrl);
-  console.log(
-    chalk.yellow("Created"),
-    `${getDurationString(data.created)} ago`
-  );
-  console.log(chalk.yellow("Fee"), `${data.fee.toLocaleString()} sats`);
-  console.log(chalk.yellow("Status"), data.status);
-  console.log(chalk.yellow("Version"), data.version);
-  console.log("\n");
+const print = (containers: any) => {
+  containers.forEach((container: any) => {
+    console.log("\n");
+    console.log(chalk.yellow("ID:"), container.id);
+    console.log(chalk.yellow("Connection Url:"), container.connectionUrl);
+    console.log(
+      chalk.yellow("Created"),
+      `${getDurationString(container.created)} ago`
+    );
+    console.log(chalk.yellow("Fee"), `${container.fee.toLocaleString()} sats`);
+    console.log(chalk.yellow("Status"), container.status);
+    console.log(chalk.yellow("Version"), container.version);
+  });
 };

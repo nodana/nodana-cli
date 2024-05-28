@@ -20,22 +20,15 @@ export default async (id: string, options: Options) => {
 
     if (confirmed) {
       info(`Deleting. Please wait...`);
-      const response = await client.del(id, options);
+      await client.del(id, options);
 
-      print(response);
+      print();
     }
   } catch (e: any) {
     error(e.message);
   }
 };
 
-const print = (data: any) => {
-  info(`Container deleted ❌`);
-  console.log("\n");
-  console.log(chalk.yellow("Fee:"), `${data.fee.toLocaleString()} sats`);
-  console.log(
-    chalk.yellow("Sats Remaining:"),
-    `${data.satsRemaining.toLocaleString()} sats`
-  );
-  console.log("\n");
+const print = () => {
+  info(`Container deleted`);
 };
