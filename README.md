@@ -5,7 +5,7 @@ This is the official CLI tool for [Nodana](https://nodana.io). With this package
 To get started, install the package globally;
 
 ```sh
-npm install @nodana-io/nodana-cli -g
+npm install @nodana/nodana-cli -g
 ```
 
 Check that the installation was successful by running the following command in a terminal window:
