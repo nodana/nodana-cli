@@ -2,7 +2,7 @@ import chai from "chai";
 import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 
-import stop from "../../src/commands/stop";
+import stop from "../../src/commands/node/stop";
 import * as date from "../../src/helpers/date";
 import * as client from "../../src/client";
 

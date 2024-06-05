@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 import promptly from "promptly";
-import * as client from "../client";
-import { error, info } from "../helpers/output";
+import * as client from "../../client";
+import { error, info } from "../../helpers/output";
 
 type Options = {
   key?: string;
@@ -13,9 +13,7 @@ export default async (id: string, options: Options) => {
     const confirmed =
       !!options.accept ||
       (await promptly.confirm(
-        chalk.yellow(
-          "You are about to delete your container. Are you sure?[y/n]"
-        )
+        chalk.yellow("You are about to delete your node. Are you sure?[y/n]")
       ));
 
     if (confirmed) {

@@ -1,6 +1,5 @@
 import chai from "chai";
 import sinonChai from "sinon-chai";
-import sinon, { SinonStub } from "sinon";
 const expect = chai.expect;
 chai.use(sinonChai);
 

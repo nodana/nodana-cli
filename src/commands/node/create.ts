@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 import promptly from "promptly";
-import * as client from "../client";
-import { error, info, success } from "../helpers/output";
+import * as client from "../../client";
+import { error, info, success } from "../../helpers/output";
 
 type Props = {
   key?: string;
@@ -9,19 +9,19 @@ type Props = {
   seed?: string;
   autoLiquidity?: string;
   webhook?: string;
-  accept?: boolean;
+  yes?: boolean;
 };
 
 export default async (options: Props) => {
   try {
     const confirmed =
-      !!options.accept ||
+      !!options.yes ||
       (await promptly.confirm(
-        chalk.yellow("You are about to create a paylink. Are you sure?[y/n]")
+        chalk.yellow("You are about to create a node. Are you sure?[y/n]")
       ));
 
     if (confirmed) {
-      info("Creating container...");
+      info("Creating node...");
       const response = await client.create(options);
 
       print(response);
@@ -33,7 +33,7 @@ export default async (options: Props) => {
 
 const print = (data: any) => {
   console.log("\n");
-  success(`Container created and started 🚀`);
+  success(`Node created and started 🚀`);
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
   console.log(chalk.yellow("Connection Url:"), data.connectionUrl);

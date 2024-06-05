@@ -2,7 +2,7 @@ import chai from "chai";
 import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 
-import start from "../../src/commands/start";
+import start from "../../src/commands/node/start";
 import * as client from "../../src/client";
 
 const expect = chai.expect;

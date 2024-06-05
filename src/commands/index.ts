@@ -1,11 +1,9 @@
 import { default as init } from "./init";
-import { default as createNode } from "./createNode";
-import { default as start } from "./start";
-import { default as stop } from "./stop";
-import { default as del } from "./delete";
-import { default as listNodes } from "./listNodes";
 
-import { default as createLink } from "./createLink";
-import { default as listLinks } from "./listLinks";
+import { default as createNode } from "./node/create";
+import { default as startNode } from "./node/start";
+import { default as stopNode } from "./node/stop";
+import { default as deleteNode } from "./node/delete";
+import { default as listNodes } from "./node/list";
 
-export { init, createNode, start, stop, listNodes, del, createLink, listLinks };
+export { init, createNode, startNode, stopNode, listNodes, deleteNode };

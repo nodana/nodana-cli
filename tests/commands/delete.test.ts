@@ -3,7 +3,7 @@ import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 import promptly from "promptly";
 
-import del from "../../src/commands/delete";
+import del from "../../src/commands/node/delete";
 import * as client from "../../src/client";
 
 const expect = chai.expect;

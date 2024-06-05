@@ -11,7 +11,6 @@ import * as client from "../../src/client";
 
 describe("client", () => {
   let requestStub: SinonStub;
-  let readFileStub: SinonStub;
   let writeFileStub: SinonStub;
 
   const key = "12345.12345";
@@ -19,7 +18,6 @@ describe("client", () => {
 
   beforeEach(() => {
     requestStub = sinon.stub(request, "_call");
-    readFileStub = sinon.stub(file, "read");
     writeFileStub = sinon.stub(file, "write");
     authHeader = client.getAuthHeader(key);
   });

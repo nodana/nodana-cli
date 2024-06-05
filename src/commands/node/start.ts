@@ -1,6 +1,6 @@
 const chalk = require("chalk");
-import * as client from "../client";
-import { error, info, success } from "../helpers/output";
+import * as client from "../../client";
+import { error, info, success } from "../../helpers/output";
 
 type Options = {
   key?: string;
@@ -18,7 +18,7 @@ export default async (id: string, options: Options) => {
 };
 
 const print = (data: any) => {
-  success(`Container started 🚀`);
+  success(`Node started 🚀`);
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
   console.log(chalk.yellow("Status:"), data.status);
