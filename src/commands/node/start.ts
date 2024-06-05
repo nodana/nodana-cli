@@ -9,7 +9,7 @@ type Options = {
 export default async (id: string, options: Options) => {
   try {
     info(`Starting. Please wait...`);
-    const response = await client.start(id, options);
+    const response = await client.startNode(id, options);
 
     print(response);
   } catch (e: any) {
@@ -22,5 +22,4 @@ const print = (data: any) => {
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
   console.log(chalk.yellow("Status:"), data.status);
-  console.log("\n");
 };

@@ -35,7 +35,7 @@ export const init = async () => {
   }
 };
 
-export const create = async (options: any) => {
+export const createNode = async (options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -45,7 +45,7 @@ export const create = async (options: any) => {
   }
 };
 
-export const start = async (id: string, options: any) => {
+export const startNode = async (id: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -60,7 +60,7 @@ export const start = async (id: string, options: any) => {
   }
 };
 
-export const stop = async (id: string, options: any) => {
+export const stopNode = async (id: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -75,7 +75,7 @@ export const stop = async (id: string, options: any) => {
   }
 };
 
-export const list = async (options: any) => {
+export const listNodes = async (options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -85,11 +85,31 @@ export const list = async (options: any) => {
   }
 };
 
-export const del = async (id: string, options: any) => {
+export const deleteNode = async (id: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {
     return request._call(`/containers/${id}`, "DELETE", getAuthHeader(key));
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+export const createInvoice = async (options: any) => {
+  const key = await getAuthKey(options);
+
+  try {
+    return request._call("/invoices", "POST", getAuthHeader(key), options);
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+export const status = async (options: any) => {
+  const key = await getAuthKey(options);
+
+  try {
+    return request._call("/keys", "GET", getAuthHeader(key), options);
   } catch (e: any) {
     throw e;
   }

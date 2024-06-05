@@ -12,7 +12,7 @@ const DELAY = 5000;
 export default async (id: string, options: Options) => {
   try {
     info(`Stopping. Please wait...`);
-    const response = await client.stop(id, options);
+    const response = await client.stopNode(id, options);
     await sleep(DELAY); // wait 5 seconds instead of blocking thread on api
 
     print(response);
@@ -26,5 +26,4 @@ const print = (data: any) => {
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
   console.log(chalk.yellow("Status:"), data.status);
-  console.log("\n");
 };

@@ -22,7 +22,7 @@ export default async (options: Props) => {
 
     if (confirmed) {
       info("Creating node...");
-      const response = await client.create(options);
+      const response = await client.createNode(options);
 
       print(response);
     }
@@ -41,5 +41,4 @@ const print = (data: any) => {
   data.seed && console.log(chalk.yellow("Seed"), data.seed);
   data.webhookSecret &&
     console.log(chalk.yellow("Webhook Secret"), data.webhookSecret);
-  console.log("\n");
 };

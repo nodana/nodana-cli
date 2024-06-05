@@ -9,7 +9,7 @@ type Props = {
 
 export default async (options: Props) => {
   try {
-    const nodes = await client.list(options);
+    const nodes = await client.listNodes(options);
 
     if (nodes.length === 0) {
       info("No nodes found");

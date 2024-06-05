@@ -31,6 +31,14 @@ create
   .option("-y, --yes", "Skip confirmation")
   .action(commands.createNode);
 
+create
+  .command("invoice")
+  .description("create an invoice")
+  .option("-k, --key <string>", "API Key")
+  .requiredOption("-v, --value <value>", "Invoice value (in sats, min: 1000)")
+  .option("-m, --memo <string>", "Invoice memo")
+  .action(commands.createInvoice);
+
 program
   .command("start")
   .description("start a node")
@@ -52,6 +60,12 @@ program
   .option("-k, --key <string>", "API Key")
   .option("-y, --accept", "Skip confirmation")
   .action(commands.deleteNode);
+
+program
+  .command("status")
+  .description("Check status of API")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.status);
 
 // Create sub commands for list
 const list = program.command("list").description("list Nodana resources");

@@ -3,17 +3,18 @@ import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 import promptly from "promptly";
 
-import del from "../../src/commands/node/delete";
-import * as client from "../../src/client";
+import create from "../../../src/commands/node/create";
+import * as client from "../../../src/client";
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 const mockResponse = {
-  id: "1",
-  status: "deleted",
+  id: "12345",
+  connectionUrl: "http://test.com",
 };
-describe("commands/delete", () => {
+
+describe("commands/node/create", () => {
   let promptlyStub: SinonStub;
   let clientStub: SinonStub;
   let consoleStub: SinonStub;
@@ -22,7 +23,7 @@ describe("commands/delete", () => {
     promptlyStub = sinon.stub(promptly, "confirm");
     promptlyStub.resolves(true);
 
-    clientStub = sinon.stub(client, "del");
+    clientStub = sinon.stub(client, "createNode");
     clientStub.resolves(mockResponse);
 
     consoleStub = sinon.stub(console, "log");
@@ -32,12 +33,11 @@ describe("commands/delete", () => {
     sinon.restore();
   });
 
-  it("should call client del function with option key if provided", async () => {
-    const key = "key-1";
-    const containerId = "container-1";
-    await del(containerId, { key });
+  it("should call client create function with option key if provided", async () => {
+    const key = "12345";
+    await create({ key });
 
-    expect(clientStub).to.be.calledWith(containerId, { key });
+    expect(clientStub).to.be.calledWith({ key });
     expect(consoleStub).to.be.called;
   });
 });

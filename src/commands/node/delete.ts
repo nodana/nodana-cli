@@ -18,7 +18,7 @@ export default async (id: string, options: Options) => {
 
     if (confirmed) {
       info(`Deleting. Please wait...`);
-      await client.del(id, options);
+      await client.deleteNode(id, options);
 
       print();
     }
