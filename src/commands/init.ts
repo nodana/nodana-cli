@@ -4,13 +4,13 @@ import * as client from "../client";
 import { error, success } from "../helpers/output";
 
 type Props = {
-  accept?: boolean;
+  yes?: boolean;
 };
 
 export default async (options: Props) => {
   try {
     const confirmed =
-      !!options.accept ||
+      !!options.yes ||
       (await promptly.confirm(
         chalk.yellow(
           "By continuing, you confirm you have read and accept our terms and conditions (https://nodana.io/terms). Continue?[y/n]"

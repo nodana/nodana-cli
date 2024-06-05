@@ -17,7 +17,7 @@ export default async (options: Props) => {
     const confirmed =
       !!options.accept ||
       (await promptly.confirm(
-        chalk.yellow("You are about to create a container. Are you sure?[y/n]")
+        chalk.yellow("You are about to create a paylink. Are you sure?[y/n]")
       ));
 
     if (confirmed) {
