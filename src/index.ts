@@ -36,7 +36,6 @@ create
   .description("create an invoice")
   .option("-k, --key <string>", "API Key")
   .requiredOption("-v, --value <value>", "Invoice value (in sats, min: 1000)")
-  .option("-m, --memo <string>", "Invoice memo")
   .action(commands.createInvoice);
 
 program

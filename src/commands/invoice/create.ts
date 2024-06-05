@@ -6,7 +6,6 @@ import { error, info, success } from "../../helpers/output";
 type Props = {
   key?: string;
   value?: number;
-  memo?: string;
 };
 
 export default async (options: Props) => {
@@ -32,10 +31,9 @@ export default async (options: Props) => {
 
 const print = (invoice: any) => {
   console.log("\n");
-  success(`Invoice created`);
-  console.log("\n");
+  success(`Invoice created. The invoice will expire in 1 hour.`);
+  console.log(chalk.yellow("Payment URL:"), invoice.url);
   console.log(chalk.yellow("ID:"), invoice.id);
-  console.log(chalk.yellow("Value (sats):"), invoice.value);
-  console.log(chalk.yellow("Payment Request:"), invoice.pr);
-  invoice.memo && console.log(chalk.yellow("memo:"), invoice.memo);
+  console.log(chalk.yellow("Sats:"), invoice.value);
+  invoice.memo && console.log(chalk.yellow("Memo:"), invoice.memo);
 };
