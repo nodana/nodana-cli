@@ -15,6 +15,12 @@ program
   )
   .action(commands.init);
 
+program
+  .command("exit")
+  .description("removes an API key")
+  .option("-y, --yes", "Skip confirmation")
+  .action(commands.exit);
+
 // Create sub commands for create
 const create = program.command("create").description("create Nodana resources");
 
@@ -35,7 +41,10 @@ create
   .command("invoice")
   .description("create an invoice")
   .option("-k, --key <string>", "API Key")
-  .requiredOption("-v, --value <value>", "Invoice value (in sats, min: 1000)")
+  .requiredOption(
+    "-v, --value <value>",
+    "Invoice value (in sats, min: 1k, max: 1m)"
+  )
   .action(commands.createInvoice);
 
 program

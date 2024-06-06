@@ -1,7 +1,7 @@
 {
   "name": "@nodana/nodana-cli",
-  "version": "0.2.4",
-  "description": "Run a phoenixd Lightning node in the cloud on Nodana",
+  "version": "0.3.0",
+  "description": "Lightning node infrastructure as a service",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nodana/nodana-cli.git"

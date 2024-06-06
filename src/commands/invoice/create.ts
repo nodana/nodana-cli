@@ -15,9 +15,10 @@ export default async (options: Props) => {
       options.value < MIN_INVOICE_VALUE ||
       options.value > MAX_INVOICE_VALUE
     ) {
-      throw Error(
+      info(
         `Value must be between ${MIN_INVOICE_VALUE} and ${MAX_INVOICE_VALUE}`
       );
+      return;
     }
 
     info("Creating invoice...");
@@ -25,7 +26,7 @@ export default async (options: Props) => {
 
     print(response);
   } catch (e: any) {
-    error(e.message);
+    error("Invoice command could not be completed");
   }
 };
 

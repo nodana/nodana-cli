@@ -82,7 +82,7 @@ Create a Lightning invoice to top up the credit on your API key.
 
 ```
 nodana create invoice
-  -v <value> (Amount in sats, min: 1000, max: 100,000)
+  -v <value> (Amount in sats, min: 1k, max: 1m)
 ```
 
 ### Status

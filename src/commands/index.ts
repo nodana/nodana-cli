@@ -1,5 +1,6 @@
 import { default as init } from "./init";
 import { default as status } from "./status";
+import { default as exit } from "./exit";
 
 import { default as createNode } from "./node/create";
 import { default as startNode } from "./node/start";
@@ -12,6 +13,7 @@ import { default as createInvoice } from "./invoice/create";
 export {
   init,
   status,
+  exit,
   createNode,
   startNode,
   stopNode,

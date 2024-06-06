@@ -10,7 +10,7 @@ describe("date helper", () => {
     it("should return not available string", () => {
       // @ts-ignore
       const response = getDurationString("test");
-      expect(response).to.equal("Duration not available");
+      expect(response).to.equal("Not available");
     });
   });
 
@@ -25,6 +25,13 @@ describe("date helper", () => {
     it("should return hours and minutes", () => {
       const response = getDurationString(140);
       expect(response).to.equal("2 hours, 20 minutes");
+    });
+  });
+
+  describe("When mins is greater than 1 day", () => {
+    it("should return days, hours and minutes", () => {
+      const response = getDurationString(1500);
+      expect(response).to.equal("1 days, 1 hours");
     });
   });
 });

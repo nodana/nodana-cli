@@ -18,7 +18,7 @@ export default async (options: Props) => {
 
     print(nodes);
   } catch (e: any) {
-    error(e.message);
+    error("List nodes command could not be completed");
   }
 };
 
@@ -28,10 +28,7 @@ const print = (nodes: any) => {
     console.log(chalk.yellow("ID:"), node.id);
     console.log(chalk.yellow("Name:"), node.name);
     console.log(chalk.yellow("Connection Url:"), node.connectionUrl);
-    console.log(
-      chalk.yellow("Created"),
-      `${getDurationString(node.created)} ago`
-    );
+    console.log(chalk.yellow("Created"), getDurationString(node.created));
     console.log(chalk.yellow("Fee"), `${node.fee.toLocaleString()} sats`);
     console.log(chalk.yellow("Status"), node.status);
     console.log(chalk.yellow("Version"), node.version);

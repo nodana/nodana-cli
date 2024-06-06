@@ -15,7 +15,6 @@ interface FakeResponse {
 }
 
 describe("request", () => {
-  // const originalGlobalFetch = global.fetch;
   const fakeJson = sinon.fake.resolves({ foo: "bar" });
   const fakeResponse: FakeResponse = { ok: true, status: 200, json: fakeJson };
   const fetchStub = sinon.stub();
@@ -26,7 +25,6 @@ describe("request", () => {
   });
 
   afterEach(() => {
-    // global.fetch = originalGlobalFetch;
     sinon.restore();
   });
 

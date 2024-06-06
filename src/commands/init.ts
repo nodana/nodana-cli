@@ -1,7 +1,8 @@
 const chalk = require("chalk");
 import promptly from "promptly";
 import * as client from "../client";
-import { error, success } from "../helpers/output";
+import { error, success, info } from "../helpers/output";
+import { fileExists } from "../helpers/file";
 
 type Props = {
   yes?: boolean;
@@ -9,6 +10,14 @@ type Props = {
 
 export default async (options: Props) => {
   try {
+    const configFileExists = await fileExists();
+    if (configFileExists) {
+      info(
+        "Config file already exists. You can use 'nodana exit' to remove the config file."
+      );
+      return;
+    }
+
     const confirmed =
       !!options.yes ||
       (await promptly.confirm(
@@ -23,7 +32,7 @@ export default async (options: Props) => {
       print();
     }
   } catch (e: any) {
-    error(e.message);
+    error("Init command could not be completed");
   }
 };
 

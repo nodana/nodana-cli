@@ -27,7 +27,7 @@ export default async (options: Props) => {
       print(response);
     }
   } catch (e: any) {
-    error(e.message);
+    error("Create node command could not be completed");
   }
 };
 

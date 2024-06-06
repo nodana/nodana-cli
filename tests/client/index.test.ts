@@ -18,7 +18,7 @@ describe("client", () => {
 
   beforeEach(() => {
     requestStub = sinon.stub(request, "_call");
-    writeFileStub = sinon.stub(file, "write");
+    writeFileStub = sinon.stub(file, "writeFile");
     authHeader = client.getAuthHeader(key);
   });
 
@@ -47,7 +47,7 @@ describe("client", () => {
 
   describe("status", () => {
     beforeEach(() => {
-      requestStub.resolves({ key: "12345" });
+      requestStub.resolves({ key: "12345.abcde" });
     });
 
     it("should call request with correct arguments", async () => {
@@ -57,10 +57,9 @@ describe("client", () => {
       await client.status(options);
 
       expect(requestStub).to.have.been.calledWith(
-        "/keys",
+        "/keys/12345",
         "GET",
-        authHeader,
-        options
+        authHeader
       );
     });
   });

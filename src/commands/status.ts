@@ -1,6 +1,6 @@
 const chalk = require("chalk");
 import * as client from "../client";
-import { error, info } from "../helpers/output";
+import { error } from "../helpers/output";
 import { getDurationString } from "../helpers/date";
 
 type Props = {
@@ -13,12 +13,14 @@ export default async (options: Props) => {
 
     print(response);
   } catch (e: any) {
-    error(e.message);
+    error("Status command could not be completed");
   }
 };
 
 const print = (key: any) => {
   console.log("\n");
   console.log(chalk.yellow("ID:"), key.id);
-  console.log(chalk.yellow("Sats remaining:"), key.sats);
+  console.log(chalk.yellow("Sats Remaining:"), key.sats);
+  console.log(chalk.yellow("Created"), getDurationString(key.created));
+  console.log(chalk.yellow("Beta"), key.beta);
 };

@@ -2,6 +2,7 @@ import chai from "chai";
 import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 import promptly from "promptly";
+import * as file from "../../src/helpers/file";
 
 import init from "../../src/commands/init";
 import * as client from "../../src/client";
@@ -13,6 +14,7 @@ describe("commands/init", () => {
   let promptlyStub: SinonStub;
   let clientStub: SinonStub;
   let consoleStub: SinonStub;
+  let fileExistsStub: SinonStub;
 
   beforeEach(() => {
     promptlyStub = sinon.stub(promptly, "confirm");
@@ -22,6 +24,9 @@ describe("commands/init", () => {
     clientStub.resolves({ key: "key-abc" });
 
     consoleStub = sinon.stub(console, "log");
+
+    fileExistsStub = sinon.stub(file, "fileExists");
+    fileExistsStub.resolves(false);
   });
 
   afterEach(() => {

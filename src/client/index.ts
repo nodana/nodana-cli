@@ -1,6 +1,7 @@
 import { request } from "../request";
-import { read as readFile, write as writeFile } from "../helpers/file";
-import { CONF_FILE_NAME } from "../constants";
+import { readFile, writeFile } from "../helpers/file";
+import { info } from "../helpers/output";
+import { KEY_DELIMITER } from "../constants";
 
 export const getAuthKey = async (options: any) => {
   if ("key" in options) return options.key;
@@ -9,7 +10,8 @@ export const getAuthKey = async (options: any) => {
     const key = await readFile();
     return key;
   } catch (e: any) {
-    throw new Error(`${CONF_FILE_NAME} not found`);
+    info("Config file not found");
+    throw e;
   }
 };
 
@@ -107,9 +109,10 @@ export const createInvoice = async (options: any) => {
 
 export const status = async (options: any) => {
   const key = await getAuthKey(options);
+  const [id] = key.split(KEY_DELIMITER);
 
   try {
-    return request._call("/keys", "GET", getAuthHeader(key), options);
+    return request._call(`/keys/${id}`, "GET", getAuthHeader(key));
   } catch (e: any) {
     throw e;
   }
