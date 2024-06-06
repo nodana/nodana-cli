@@ -13,7 +13,7 @@ export default async (options: Props) => {
 
     print(response);
   } catch (e: any) {
-    error("Status command could not be completed");
+    error(e.message);
   }
 };
 

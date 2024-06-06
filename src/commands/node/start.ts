@@ -13,7 +13,7 @@ export default async (id: string, options: Options) => {
 
     print(response);
   } catch (e: any) {
-    error("Start node command could not be completed");
+    error(e.message);
   }
 };
 

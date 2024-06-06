@@ -28,7 +28,15 @@ nodana init
   -y (auto accept Nodana's terms and conditions)
 ```
 
-After calling `nodana init`, the CLI will save your API key in a local file`. The key will automatically be included in future requests. You can override this by providing the API key manually using the `-k <key>` option.
+After calling `nodana init`, the CLI will save your API key in a local file. The key will automatically be included in future requests. You can override this by providing the API key manually using the `-k <key>` option.
+
+### During Beta Testing
+
+During our beta testing period, running `nodana init` will automatically enrol you on the program and you will get your free sats added to your API key automatically. These free sats should give you plenty of time to test out Nodana.
+
+### After Beta Testing
+
+If you have joined after our beta testing period you won't get any sats attached to your API key automatically. You will instead need to run `nodana invoice` to create an invoice, choosing how many sats you would like the invoice to be for. The response will include a url that you can visit to make payment. Don't forget your Lightning wallet.
 
 ### Create Node
 

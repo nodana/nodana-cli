@@ -32,7 +32,7 @@ export default async (options: Props) => {
       print();
     }
   } catch (e: any) {
-    error("Init command could not be completed");
+    error(e.message);
   }
 };
 

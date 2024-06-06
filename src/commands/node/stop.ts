@@ -17,7 +17,7 @@ export default async (id: string, options: Options) => {
 
     print(response);
   } catch (e: any) {
-    error("Stop node command could not be completed");
+    error(e.message);
   }
 };
 

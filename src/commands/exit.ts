@@ -23,7 +23,7 @@ export default async (options: Props) => {
       print();
     }
   } catch (e: any) {
-    error("Exit command could not be completed");
+    error(e.message);
   }
 };
 

@@ -26,7 +26,7 @@ export default async (options: Props) => {
 
     print(response);
   } catch (e: any) {
-    error("Invoice command could not be completed");
+    error(e.message);
   }
 };
 

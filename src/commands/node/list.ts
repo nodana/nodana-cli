@@ -18,7 +18,7 @@ export default async (options: Props) => {
 
     print(nodes);
   } catch (e: any) {
-    error("List nodes command could not be completed");
+    error(e.message);
   }
 };
 

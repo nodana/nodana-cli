@@ -23,7 +23,7 @@ export default async (id: string, options: Options) => {
       print();
     }
   } catch (e: any) {
-    error("Delete node command could not be completed");
+    error(e.message);
   }
 };
 
