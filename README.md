@@ -36,6 +36,7 @@ Create and start a node.
 
 ```
 nodana create node
+
   -n <name>
   -p <password>
   -s <seed>
@@ -82,6 +83,7 @@ Create a Lightning invoice to top up the credit on your API key.
 
 ```
 nodana create invoice
+
   -v <value> (Amount in sats, min: 1k, max: 1m)
 ```
 

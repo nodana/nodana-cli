@@ -21,6 +21,6 @@ const print = (key: any) => {
   console.log("\n");
   console.log(chalk.yellow("ID:"), key.id);
   console.log(chalk.yellow("Sats Remaining:"), key.sats);
-  console.log(chalk.yellow("Created"), getDurationString(key.created));
+  console.log(chalk.yellow("Age"), getDurationString(key.age));
   console.log(chalk.yellow("Beta"), key.beta);
 };
