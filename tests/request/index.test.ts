@@ -6,7 +6,6 @@ const expect = chai.expect;
 chai.use(sinonChai);
 
 import { request } from "../../src/request";
-import { API_BASE_URL } from "../../src/constants";
 
 interface FakeResponse {
   readonly ok: boolean;
@@ -31,7 +30,7 @@ describe("request", () => {
   it("should make GET request with provided arguments", async () => {
     await request.get("/path", {});
 
-    expect(fetchStub).to.have.been.calledWith(`${API_BASE_URL}/path`, {
+    expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -41,7 +40,7 @@ describe("request", () => {
     const testData = { foo: "bar" };
     await request.post("/path", {}, testData);
 
-    expect(fetchStub).to.have.been.calledWith(`${API_BASE_URL}/path`, {
+    expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(testData),
@@ -51,7 +50,7 @@ describe("request", () => {
   it("should make DELETE request with provided arguments", async () => {
     await request.del("/path", {});
 
-    expect(fetchStub).to.have.been.calledWith(`${API_BASE_URL}/path`, {
+    expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -61,7 +60,7 @@ describe("request", () => {
     const extraHeaders = { Authorization: "Password" };
     await request.get("/path", extraHeaders);
 
-    expect(fetchStub).to.have.been.calledWith(`${API_BASE_URL}/path`, {
+    expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "GET",
       headers: { "Content-Type": "application/json", ...extraHeaders },
     });
