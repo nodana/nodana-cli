@@ -24,7 +24,6 @@ Get an API key.
 
 ```
 nodana init
-
   -y (auto accept Nodana's terms and conditions)
 ```
 
@@ -32,11 +31,11 @@ After calling `nodana init`, the CLI will save your API key in a local file. The
 
 ### Create Invoice
 
-Create a Lightning invoice to top up the credit on your API key.
+Create a Lightning invoice to top up the credit on your API key. Each sat equals 2.5 minutes of run time.
 
 ```
 nodana create invoice
-  -v <value> (Amount in sats, min: 1k, max: 1m)
+  -v <value> (Required, amount in sats, min: 1k, max: 1m)
 ```
 
 ### Create Node
@@ -45,9 +44,9 @@ Create and start a node.
 
 ```
 nodana create node
-  -n <name>
-  -a <autoLiquidity>
-  -w <webhook>
+  -n <name> (optional)
+  -a <autoLiquidity> (optional, default "2m")
+  -w <webhook> (optional)
 ```
 
 ### Start
