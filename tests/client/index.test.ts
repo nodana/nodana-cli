@@ -76,7 +76,11 @@ describe("client", () => {
         "/containers",
         "POST",
         authHeader,
-        options
+        {
+          config: {
+            password: "12345",
+          },
+        }
       );
     });
   });
@@ -153,7 +157,10 @@ describe("client", () => {
         "/invoices",
         "POST",
         authHeader,
-        options
+        {
+          value: 1000,
+          memo: "Test memo",
+        }
       );
     });
   });

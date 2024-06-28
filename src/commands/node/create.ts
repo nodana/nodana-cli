@@ -5,8 +5,6 @@ import { error, info, success } from "../../helpers/output";
 
 type Props = {
   key?: string;
-  password?: string;
-  seed?: string;
   autoLiquidity?: string;
   webhook?: string;
   yes?: boolean;

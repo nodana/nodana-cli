@@ -26,6 +26,15 @@ export const getAuthHeader = (key: string) => {
   };
 };
 
+export const cleanOptions = (options: any) => {
+  const optionsCopy = { ...options };
+
+  delete optionsCopy.key;
+  delete optionsCopy.yes;
+
+  return optionsCopy;
+};
+
 export const init = async () => {
   try {
     const response = await request._call("/keys", "POST", {}, {});
@@ -41,7 +50,9 @@ export const createNode = async (options: any) => {
   const key = await getAuthKey(options);
 
   try {
-    return request._call("/containers", "POST", getAuthHeader(key), options);
+    return request._call("/containers", "POST", getAuthHeader(key), {
+      config: cleanOptions(options),
+    });
   } catch (e: any) {
     throw e;
   }
@@ -101,7 +112,12 @@ export const createInvoice = async (options: any) => {
   const key = await getAuthKey(options);
 
   try {
-    return request._call("/invoices", "POST", getAuthHeader(key), options);
+    return request._call(
+      "/invoices",
+      "POST",
+      getAuthHeader(key),
+      cleanOptions(options)
+    );
   } catch (e: any) {
     throw e;
   }
