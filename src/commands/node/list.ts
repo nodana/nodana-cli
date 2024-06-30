@@ -27,6 +27,7 @@ const print = (nodes: any) => {
     console.log("\n");
     console.log(chalk.yellow("ID:"), node.id);
     node.name && console.log(chalk.yellow("Name:"), node.name);
+    console.log(chalk.yellow("Service"), node.service);
     console.log(chalk.yellow("Connection Url:"), node.connectionUrl);
     console.log(chalk.yellow("Age"), getDurationString(node.age));
     console.log(chalk.yellow("Fee"), `${node.fee.toLocaleString()} sats`);
