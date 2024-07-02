@@ -40,7 +40,7 @@ nodana create invoice
 
 ### Create A Service
 
-Create phoenixd.
+Create a `phoenixd` service:
 
 ```
 nodana service create phoenixd
@@ -50,7 +50,7 @@ nodana service create phoenixd
   -y <auto confirm> (optional)
 ```
 
-Create phoenixd.
+Create a `fedimintd` service:
 
 ```
 nodana service create fedimintd
