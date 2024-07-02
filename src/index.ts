@@ -47,9 +47,8 @@ service
 service
   .command("list")
   .description("list services")
-  .argument("<id>", "Id of service")
   .option("-k, --key <string>", "API Key")
-  .action(commands.stopService);
+  .action(commands.listServices);
 
 service
   .command("delete")

@@ -22,4 +22,5 @@ const print = (data: any) => {
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
   console.log(chalk.yellow("Status:"), data.status);
+  console.log("\n");
 };
