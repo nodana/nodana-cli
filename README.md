@@ -1,6 +1,6 @@
 # Nodana CLI
 
-This is the official CLI tool for [Nodana](https://nodana.io). With this package you can create [phoenixd](https://phoenix.acinq.co/server) Lightning nodes hosted on Nodana infrastructure. No personal details or credit cards required. Sats / min pricing.
+This is the official CLI tool for [Nodana](https://nodana.io). With this package you can spin up Bitcoin and Lightning infrastructure in the cloud without needing to worry about setting up and running your own servers. We currently support two software packages (phoenixd and fedimintd) with more to come.
 
 To get started, install the package globally;
 
@@ -31,54 +31,65 @@ After calling `nodana init`, the CLI will save your API key in a local file. The
 
 ### Create Invoice
 
-Create a Lightning invoice to top up the credit on your API key. Each sat equals 2.5 minutes of run time.
+Create a Lightning invoice to top up the credit on your API key. This will allow you to deploy services in the cloud. Each sat equals 2.5 minutes of run time.
 
 ```
 nodana create invoice
   -v <value> (Required, amount in sats, min: 1k, max: 1m)
 ```
 
-### Create Node
+### Create A Service
 
-Create and start a node.
+Create phoenixd.
 
 ```
-nodana create node
+nodana service create phoenixd
   -n <name> (optional)
   -a <autoLiquidity> (optional, default "2m")
   -w <webhook> (optional)
+  -y <auto confirm> (optional)
 ```
 
-### Start
-
-Start a node that has been stopped.
+Create phoenixd.
 
 ```
-nodana start <nodeId>
+nodana service create fedimintd
+  -y <auto confirm> (optional)
 ```
 
-### Stop
+> The create command will also start a service automatically.
 
-Stop a node. If you would like to delete a node then you must stop it first.
+### Start Service
 
-```
-nodana stop <nodeId>
-```
-
-### List
-
-List nodes.
+Start a service that has been stopped.
 
 ```
-nodana list
+nodana service start <serviceId>
 ```
 
-### Delete
+### Stop Service
 
-Delete a node.
+Stop a service.
 
 ```
-nodana delete <nodeId>
+nodana service stop <serviceId>
+```
+
+### List Services
+
+List services.
+
+```
+nodana service list
+```
+
+### Delete Service
+
+Delete a service.
+
+```
+nodana service delete <serviceId>
+  -y <auto confirm> (optional)
 ```
 
 ### Status

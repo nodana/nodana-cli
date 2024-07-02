@@ -4,16 +4,22 @@ import * as commands from "./commands";
 
 const program = new Command();
 
-program.name("nodana-cli").version("0.4.1").description("Nodana CLI");
+program.name("nodana-cli").version("0.5.0").description("Nodana CLI");
 
 program
   .command("init")
   .description("create an API key")
   .option(
     "-y, --yes",
-    "Accept Nodana's terms and conditions (https://nodana.io/terms)"
+    "Accept Nodana's Terms and Conditions (https://nodana.io/terms)"
   )
   .action(commands.init);
+
+program
+  .command("status")
+  .description("Check status of API")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.status);
 
 program
   .command("exit")
@@ -22,23 +28,63 @@ program
   .action(commands.exit);
 
 // Create sub commands for create
-const create = program.command("create").description("create Nodana resources");
+const service = program.command("service");
+
+service
+  .command("start")
+  .description("start a service")
+  .argument("<id>", "Id of service")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.startService);
+
+service
+  .command("stop")
+  .description("stop a service")
+  .argument("<id>", "Id of service")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.stopService);
+
+service
+  .command("list")
+  .description("list services")
+  .argument("<id>", "Id of service")
+  .option("-k, --key <string>", "API Key")
+  .action(commands.stopService);
+
+service
+  .command("delete")
+  .description("delete a service")
+  .argument("<id>", "Id of service")
+  .option("-k, --key <string>", "API Key")
+  .option("-y, --accept", "Skip confirmation")
+  .action(commands.deleteService);
+
+const create = service.command("create").description("create a service");
 
 create
-  .command("node", { isDefault: true })
-  .description("create a node")
-  .option("-k, --key <string>", "API Key")
-  .option("-n, --name <string>", "Node name")
-  .option("-p, --password <string>", "Node password")
-  .option("-s, --seed <string>", "Node seed")
+  .command("phoenixd")
+  .option("-k, --key <string>", "API Key (overrides config file key)")
+  .option("-n, --name <string>", "Name your service")
   .option("-a, --autoLiquidity <string>", "Auto liquidity value (2m, 5m, 10m)")
   .option("-w, --webhook <string>", "Webhook url")
-  .option("-x, --webhookSecret <string>", "Webhook secret")
   .option("-y, --yes", "Skip confirmation")
-  .action(commands.createNode);
+  .action((options: any) => {
+    commands.createService({ ...options, type: "phoenixd" });
+  });
 
 create
-  .command("invoice")
+  .command("fedimintd")
+  .option("-k, --key <string>", "API Key (overrides config file key)")
+  .option("-n, --name <string>", "Name your service")
+  .option("-y, --yes", "Skip confirmation")
+  .action((options: any) => {
+    commands.createService({ ...options, type: "fedimintd" });
+  });
+
+const invoice = program.command("invoice");
+
+invoice
+  .command("create")
   .description("create an invoice")
   .option("-k, --key <string>", "API Key")
   .requiredOption(
@@ -46,42 +92,5 @@ create
     "Invoice value (in sats, min: 1k, max: 1m)"
   )
   .action(commands.createInvoice);
-
-program
-  .command("start")
-  .description("start a node")
-  .argument("<id>", "Id of node")
-  .option("-k, --key <string>", "API Key")
-  .action(commands.startNode);
-
-program
-  .command("stop")
-  .description("stop a node")
-  .argument("<id>", "Id of node")
-  .option("-k, --key <string>", "API Key")
-  .action(commands.stopNode);
-
-program
-  .command("delete")
-  .description("delete a node")
-  .argument("<id>", "Id of node")
-  .option("-k, --key <string>", "API Key")
-  .option("-y, --accept", "Skip confirmation")
-  .action(commands.deleteNode);
-
-program
-  .command("status")
-  .description("Check status of API")
-  .option("-k, --key <string>", "API Key")
-  .action(commands.status);
-
-// Create sub commands for list
-const list = program.command("list").description("list Nodana resources");
-
-list
-  .command("nodes", { isDefault: true })
-  .description("list nodes")
-  .option("-k, --key <string>", "API Key")
-  .action(commands.listNodes);
 
 program.parse();

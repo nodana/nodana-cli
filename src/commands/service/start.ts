@@ -9,7 +9,7 @@ type Options = {
 export default async (id: string, options: Options) => {
   try {
     info(`Starting. Please wait...`);
-    const response = await client.startNode(id, options);
+    const response = await client.startService(id, options);
 
     print(response);
   } catch (e: any) {

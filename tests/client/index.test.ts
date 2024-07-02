@@ -64,13 +64,14 @@ describe("client", () => {
     });
   });
 
-  describe("createNode", () => {
+  describe("service/create", () => {
     it("should call request with correct arguments", async () => {
       const options = {
         key,
         password: "12345",
+        type: "phoenixd",
       };
-      await client.createNode(options);
+      await client.createService(options);
 
       expect(requestStub).to.have.been.calledWith(
         "/containers",
@@ -79,19 +80,20 @@ describe("client", () => {
         {
           config: {
             password: "12345",
+            type: "phoenixd",
           },
         }
       );
     });
   });
 
-  describe("startNode", () => {
+  describe("service/start", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "1";
       const options = {
         key,
       };
-      await client.startNode(containerId, options);
+      await client.startService(containerId, options);
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}/start`,
@@ -102,13 +104,13 @@ describe("client", () => {
     });
   });
 
-  describe("stopNode", () => {
+  describe("service/stop", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "1";
       const options = {
         key,
       };
-      await client.stopNode(containerId, options);
+      await client.stopService(containerId, options);
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}/stop`,
@@ -119,9 +121,9 @@ describe("client", () => {
     });
   });
 
-  describe("listNodes", () => {
+  describe("service/list", () => {
     it("should call request with correct arguments", async () => {
-      await client.listNodes({ key });
+      await client.listServices({ key });
 
       expect(requestStub).to.have.been.calledWith(
         "/containers",
@@ -131,10 +133,10 @@ describe("client", () => {
     });
   });
 
-  describe("deleteNode", () => {
+  describe("service/delete", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "12345";
-      await client.deleteNode(containerId, { key });
+      await client.deleteService(containerId, { key });
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}`,
@@ -144,7 +146,7 @@ describe("client", () => {
     });
   });
 
-  describe("createInvoice", () => {
+  describe("invoice/create", () => {
     it("should call request with correct arguments", async () => {
       const options = {
         key,

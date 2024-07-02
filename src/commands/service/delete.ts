@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 import promptly from "promptly";
 import * as client from "../../client";
-import { error, info } from "../../helpers/output";
+import { success, error, info } from "../../helpers/output";
 
 type Options = {
   key?: string;
@@ -13,12 +13,12 @@ export default async (id: string, options: Options) => {
     const confirmed =
       !!options.accept ||
       (await promptly.confirm(
-        chalk.yellow("You are about to delete your node. Are you sure?[y/n]")
+        chalk.yellow("You are about to delete your service. Are you sure?[y/n]")
       ));
 
     if (confirmed) {
-      info(`Deleting. Please wait...`);
-      await client.deleteNode(id, options);
+      info(`Deleting service...`);
+      await client.deleteService(id, options);
 
       print();
     }
@@ -28,5 +28,5 @@ export default async (id: string, options: Options) => {
 };
 
 const print = () => {
-  info(`Container deleted`);
+  success("Service deleted");
 };

@@ -46,7 +46,7 @@ export const init = async () => {
   }
 };
 
-export const createNode = async (options: any) => {
+export const createService = async (options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -58,7 +58,7 @@ export const createNode = async (options: any) => {
   }
 };
 
-export const startNode = async (id: string, options: any) => {
+export const startService = async (id: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -73,7 +73,7 @@ export const startNode = async (id: string, options: any) => {
   }
 };
 
-export const stopNode = async (id: string, options: any) => {
+export const stopService = async (id: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -88,7 +88,7 @@ export const stopNode = async (id: string, options: any) => {
   }
 };
 
-export const listNodes = async (options: any) => {
+export const listServices = async (options: any) => {
   const key = await getAuthKey(options);
 
   try {
@@ -98,7 +98,7 @@ export const listNodes = async (options: any) => {
   }
 };
 
-export const deleteNode = async (id: string, options: any) => {
+export const deleteService = async (id: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {

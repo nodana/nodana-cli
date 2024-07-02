@@ -2,7 +2,7 @@ import chai from "chai";
 import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
 
-import start from "../../../src/commands/node/start";
+import start from "../../../src/commands/service/start";
 import * as client from "../../../src/client";
 
 const expect = chai.expect;
@@ -13,12 +13,12 @@ const mockResponse = {
   status: "started",
 };
 
-describe("commands/node/start", () => {
+describe("commands/service/start", () => {
   let clientStub: SinonStub;
   let consoleStub: SinonStub;
 
   beforeEach(() => {
-    clientStub = sinon.stub(client, "startNode");
+    clientStub = sinon.stub(client, "startService");
     clientStub.resolves(mockResponse);
 
     consoleStub = sinon.stub(console, "log");

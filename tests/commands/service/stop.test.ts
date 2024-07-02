@@ -1,9 +1,9 @@
 import chai from "chai";
 import sinonChai from "sinon-chai";
 import sinon, { SinonStub } from "sinon";
-import promptly from "promptly";
 
-import del from "../../../src/commands/node/delete";
+import stop from "../../../src/commands/service/stop";
+import * as date from "../../../src/helpers/date";
 import * as client from "../../../src/client";
 
 const expect = chai.expect;
@@ -11,31 +11,32 @@ chai.use(sinonChai);
 
 const mockResponse = {
   id: "1",
-  status: "deleted",
+  status: "stopped",
 };
-describe("commands/node/delete", () => {
-  let promptlyStub: SinonStub;
+
+describe("commands/service/stop", () => {
   let clientStub: SinonStub;
   let consoleStub: SinonStub;
+  let dateStub: SinonStub;
 
   beforeEach(() => {
-    promptlyStub = sinon.stub(promptly, "confirm");
-    promptlyStub.resolves(true);
-
-    clientStub = sinon.stub(client, "deleteNode");
+    clientStub = sinon.stub(client, "stopService");
     clientStub.resolves(mockResponse);
 
     consoleStub = sinon.stub(console, "log");
+
+    dateStub = sinon.stub(date, "sleep");
+    dateStub.resolves();
   });
 
   afterEach(() => {
     sinon.restore();
   });
 
-  it("should call client del function with option key if provided", async () => {
+  it("should call client stop function with option key if provided", async () => {
     const key = "key-1";
     const containerId = "container-1";
-    await del(containerId, { key });
+    await stop(containerId, { key });
 
     expect(clientStub).to.be.calledWith(containerId, { key });
     expect(consoleStub).to.be.called;
