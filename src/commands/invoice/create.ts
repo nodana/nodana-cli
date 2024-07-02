@@ -31,10 +31,6 @@ export default async (options: Props) => {
 };
 
 const print = (invoice: any) => {
-  success(`Invoice created. The invoice will expire in 1 hour.`);
-  console.log("\n");
-  console.log(chalk.yellow("Payment URL:"), invoice.url);
-  console.log(chalk.yellow("ID:"), invoice.id);
-  console.log(chalk.yellow("Sats:"), invoice.value);
-  invoice.memo && console.log(chalk.yellow("Memo:"), invoice.memo);
+  console.log(`${chalk.green("Invoice created:")} ${invoice.url}`);
+  info("The invoice will expire in 1 hour.");
 };
