@@ -42,18 +42,14 @@ nodana create invoice
 
 Nodana currently supports the following services:
 
-| Service Name |
-| ------------ |
-| phoenixd     |
+| Service Name | Options                                     |
+| ------------ | ------------------------------------------- |
+| phoenixd     | -n (name), -a (autoLiquidity), -w (webhook) |
 
 Create a service:
 
 ```
-nodana service create <serviceName>
-  -n <name> (optional, tag your service)
-  -a <autoLiquidity> (optional, default "2m")
-  -w <webhook> (optional)
-  -y <auto confirm> (optional)
+nodana service create <serviceName> <options>
 ```
 
 > The create command will also start a service automatically.
