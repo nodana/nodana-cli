@@ -1,6 +1,6 @@
 # Nodana CLI
 
-This is the official CLI tool for [Nodana](https://nodana.io). With this package you can spin up Bitcoin and Lightning infrastructure in the cloud without needing to worry about setting up and running your own servers. We currently support two software packages (phoenixd and fedimintd) with more to come.
+This is the official CLI tool for [Nodana](https://nodana.io). With this package you can spin up Bitcoin and Lightning infrastructure in the cloud without needing to worry about setting up and running your own servers. We currently support phoenixd.
 
 To get started, install the package globally;
 
@@ -40,20 +40,19 @@ nodana create invoice
 
 ### Create A Service
 
-Create a `phoenixd` service:
+Nodana currently supports the following services:
+
+| Service Name |
+| ------------ |
+| phoenixd     |
+
+Create a service:
 
 ```
-nodana service create phoenixd
-  -n <name> (optional)
+nodana service create <serviceName>
+  -n <name> (optional, tag your service)
   -a <autoLiquidity> (optional, default "2m")
   -w <webhook> (optional)
-  -y <auto confirm> (optional)
-```
-
-Create a `fedimintd` service:
-
-```
-nodana service create fedimintd
   -y <auto confirm> (optional)
 ```
 
