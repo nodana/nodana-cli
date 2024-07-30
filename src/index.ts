@@ -4,7 +4,10 @@ import * as commands from "./commands";
 
 const program = new Command();
 
-program.name("nodana-cli").version("0.5.0").description("Nodana CLI");
+program
+  .name("nodana-cli")
+  .version("0.5.1", "-v, --version", "output the current version")
+  .description("Nodana CLI");
 
 program
   .command("init")
@@ -63,7 +66,7 @@ const create = service.command("create").description("create a service");
 create
   .command("phoenixd")
   .option("-k, --key <string>", "API Key (overrides config file key)")
-  .option("-n, --name <string>", "Name your service")
+  .option("-n, --name <string>", "Identifier")
   .option("-a, --autoLiquidity <string>", "Auto liquidity value (2m, 5m, 10m)")
   .option("-w, --webhook <string>", "Webhook url")
   .option("-y, --yes", "Skip confirmation")
@@ -72,12 +75,12 @@ create
   });
 
 create
-  .command("fedimintd")
+  .command("albyhub")
   .option("-k, --key <string>", "API Key (overrides config file key)")
-  .option("-n, --name <string>", "Name your service")
+  .option("-n, --name <string>", "Identifier")
   .option("-y, --yes", "Skip confirmation")
   .action((options: any) => {
-    commands.createService({ ...options, type: "fedimintd" });
+    commands.createService({ ...options, type: "albyhub" });
   });
 
 const invoice = program.command("invoice");

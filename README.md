@@ -1,20 +1,28 @@
 # Nodana CLI
 
-This is the official CLI tool for [Nodana](https://nodana.io). With this package you can spin up Bitcoin and Lightning infrastructure in the cloud without needing to worry about setting up and running your own servers. We currently support phoenixd.
+This is the official CLI tool for [Nodana](https://nodana.io). With this package you can spin up Bitcoin and Lightning infrastructure in the cloud without needing to worry about setting up and maintaining your own servers.
 
-To get started, install the package globally;
+To get started, install the package globally:
 
 ```sh
-npm install @nodana/nodana-cli -g
+npm install -g @nodana/nodana-cli
 ```
 
 Check that the installation was successful by running the following command in a terminal window:
 
 ```sh
-nodana --help
+nodana -v
 ```
 
-This should display the commands available to you.
+This should display the installed version.
+
+## Help
+
+To view the available commands in the terminal, you can run:
+
+```sh
+nodana --help
+```
 
 ## Commands
 
@@ -31,7 +39,7 @@ After calling `nodana init`, the CLI will save your API key in a local file. The
 
 ### Create Invoice
 
-Create a Lightning invoice to top up the credit on your API key. This will allow you to deploy services in the cloud. Each sat equals 2.5 minutes of run time.
+Create a Lightning invoice to top up the credit on your API key. This will allow you to deploy services in the cloud. Each sat equals 2.5 minutes of run time. The minimum amount for an invoice is 1000 sats.
 
 ```
 nodana create invoice
@@ -42,9 +50,10 @@ nodana create invoice
 
 Nodana currently supports the following services:
 
-| Service Name | Options                                     |
-| ------------ | ------------------------------------------- |
-| phoenixd     | -n (name), -a (autoLiquidity), -w (webhook) |
+| Name           | Service Name | Options                                     |
+| -------------- | ------------ | ------------------------------------------- |
+| Phoenix Server | phoenixd     | -n (name), -a (autoLiquidity), -w (webhook) |
+| Alby Hub       | albyhub      | -n (name)                                   |
 
 Create a service:
 
