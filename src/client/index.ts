@@ -46,11 +46,12 @@ export const init = async () => {
   }
 };
 
-export const createService = async (options: any) => {
+export const createService = async (service: string, options: any) => {
   const key = await getAuthKey(options);
 
   try {
     return request._call("/containers", "POST", getAuthHeader(key), {
+      service,
       config: cleanOptions(options),
     });
   } catch (e: any) {

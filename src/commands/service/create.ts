@@ -4,26 +4,25 @@ import * as client from "../../client";
 import { error, info, success } from "../../helpers/output";
 
 type Props = {
-  type: string;
+  service: string;
+  options: any;
   key?: string;
   yes?: boolean;
 };
 
-export default async (options: any) => {
+export default async (service: string, options: any) => {
   try {
-    const { type } = options;
-
     const confirmed =
       !!options.yes ||
       (await promptly.confirm(
         chalk.yellow(
-          `You are about to create a ${type} service. Are you sure?[y/n]`
+          `You are about to create a ${service} service. Are you sure?[y/n]`
         )
       ));
 
     if (confirmed) {
-      info(`Creating ${type} service...`);
-      const response = await client.createService(options);
+      info(`Creating ${service} service...`);
+      const response = await client.createService(service, options);
 
       print(response);
     }

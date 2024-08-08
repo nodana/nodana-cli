@@ -68,19 +68,18 @@ describe("client", () => {
     it("should call request with correct arguments", async () => {
       const options = {
         key,
-        password: "12345",
-        type: "phoenixd",
+        seed: "word1 word2 word3",
       };
-      await client.createService(options);
+      await client.createService("phoenixd", options);
 
       expect(requestStub).to.have.been.calledWith(
         "/containers",
         "POST",
         authHeader,
         {
+          service: "phoenixd",
           config: {
-            password: "12345",
-            type: "phoenixd",
+            seed: "word1 word2 word3",
           },
         }
       );

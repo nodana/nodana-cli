@@ -35,9 +35,9 @@ describe("commands/service/create", () => {
 
   it("should call client create function with option key if provided", async () => {
     const key = "12345";
-    await create({ key });
+    await create("phoenixd", { key });
 
-    expect(clientStub).to.be.calledWith({ key });
+    expect(clientStub).to.be.calledWith("phoenixd", { key });
     expect(consoleStub).to.be.called;
   });
 });

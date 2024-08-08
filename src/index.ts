@@ -68,10 +68,11 @@ create
   .option("-k, --key <string>", "API Key (overrides config file key)")
   .option("-n, --name <string>", "Identifier")
   .option("-a, --autoLiquidity <string>", "Auto liquidity value (2m, 5m, 10m)")
+  .option("-s, --seed <string>", "12 word seed phrase to restore wallet")
   .option("-w, --webhook <string>", "Webhook url")
   .option("-y, --yes", "Skip confirmation")
   .action((options: any) => {
-    commands.createService({ ...options, type: "phoenixd" });
+    commands.createService("phoenixd", options);
   });
 
 create
@@ -80,7 +81,7 @@ create
   .option("-n, --name <string>", "Identifier")
   .option("-y, --yes", "Skip confirmation")
   .action((options: any) => {
-    commands.createService({ ...options, type: "albyhub" });
+    commands.createService("albyhub", options);
   });
 
 const invoice = program.command("invoice");

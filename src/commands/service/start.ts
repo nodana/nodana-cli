@@ -18,9 +18,8 @@ export default async (id: string, options: Options) => {
 };
 
 const print = (data: any) => {
-  success(`Node started 🚀`);
+  success(`Service started 🚀`);
   console.log("\n");
   console.log(chalk.yellow("ID:"), data.id);
-  console.log(chalk.yellow("Status:"), data.status);
   console.log("\n");
 };
