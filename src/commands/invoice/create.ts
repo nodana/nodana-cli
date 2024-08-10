@@ -5,22 +5,11 @@ import { error, info, success } from "../../helpers/output";
 
 type Props = {
   key?: string;
-  value?: number;
+  sats?: number;
 };
 
 export default async (options: Props) => {
   try {
-    if (
-      !options.value ||
-      options.value < MIN_INVOICE_VALUE ||
-      options.value > MAX_INVOICE_VALUE
-    ) {
-      info(
-        `Value must be between ${MIN_INVOICE_VALUE} and ${MAX_INVOICE_VALUE}`
-      );
-      return;
-    }
-
     info("Creating invoice...");
     const response = await client.createInvoice(options);
 
