@@ -1,6 +1,6 @@
 {
   "name": "@nodana/nodana-cli",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Lightning node infrastructure as a service",
   "repository": {
     "type": "git",
