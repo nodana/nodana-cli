@@ -18,7 +18,7 @@ export const request = {
   },
 
   del: async function (path: string, headers: Headers) {
-    return this._call(path, "DELETE", headers, { del: "1" });
+    return this._call(path, "DELETE", headers);
   },
 
   _call: async (
@@ -28,12 +28,17 @@ export const request = {
     data?: any
   ) => {
     try {
+      const headers = {
+        ...extraHeaders,
+      };
+
+      if (method === "POST") {
+        headers["Content-Type"] = "application/json";
+      }
+
       const options: any = {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          ...extraHeaders,
-        },
+        headers,
       };
 
       if (data) {

@@ -32,7 +32,7 @@ describe("request", () => {
 
     expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {},
     });
   });
 
@@ -52,8 +52,7 @@ describe("request", () => {
 
     expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: '{"del":"1"}',
+      headers: {},
     });
   });
 
@@ -63,7 +62,7 @@ describe("request", () => {
 
     expect(fetchStub).to.have.been.calledWith("https://api.nodana.io/v1/path", {
       method: "GET",
-      headers: { "Content-Type": "application/json", ...extraHeaders },
+      headers: { ...extraHeaders },
     });
   });
 
