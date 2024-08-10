@@ -18,7 +18,7 @@ export const request = {
   },
 
   del: async function (path: string, headers: Headers) {
-    return this._call(path, "DELETE", headers);
+    return this._call(path, "DELETE", headers, {});
   },
 
   _call: async (

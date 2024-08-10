@@ -6,7 +6,7 @@ const program = new Command();
 
 program
   .name("nodana-cli")
-  .version("0.5.5", "-v, --version", "output the current version")
+  .version("0.5.6", "-v, --version", "output the current version")
   .description("Nodana CLI");
 
 program
