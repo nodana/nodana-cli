@@ -50,10 +50,10 @@ nodana create invoice
 
 Nodana currently supports the following services:
 
-| Name           | Service Name | Options                                                |
-| -------------- | ------------ | ------------------------------------------------------ |
-| Phoenix Server | phoenixd     | -n (name), -a (autoLiquidity), -s (seed), -w (webhook) |
-| Alby Hub       | alby-hub     | -n (name)                                              |
+| Name     | Service Name | Settings                            |
+| -------- | ------------ | ----------------------------------- |
+| Phoenixd | phoenixd     | name, auto_liquidity, seed, webhook |
+| Alby Hub | alby-hub     | name                                |
 
 Create a service:
 
