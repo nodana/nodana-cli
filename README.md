@@ -66,19 +66,20 @@ nodana service create <service-name>
 Create a service (with a service file)
 
 ```
-nodana service create -f </path/to/service/file>
+nodana service create -f /path/to/service/file
   -y <auto confirm> (optional)
 ```
 
 Here's an example of a service file:
 
 ```toml
-service = "<service-name>"
+service = "service-name"
 
 [settings]
 name = "my-service"
+
 webhook = "https://example.com/webhook" # (phoenixd only)
-auto_liquidity = "5m"                   # (phoenixd only)
+auto_liquidity = "5m" # (phoenixd only)
 ```
 
 > Save the service file with a `.toml` extension
