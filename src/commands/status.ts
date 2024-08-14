@@ -7,7 +7,7 @@ type Props = {
   key?: string;
 };
 
-export default async (options: Props) => {
+export default async () => {
   try {
     const response = await client.status();
 
@@ -22,5 +22,4 @@ const print = (key: any) => {
   console.log(chalk.yellow("ID:"), key.id);
   console.log(chalk.yellow("Sats Remaining:"), key.sats);
   console.log(chalk.yellow("Age"), getDurationString(key.age));
-  console.log(chalk.yellow("Beta"), key.beta);
 };

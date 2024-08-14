@@ -12,9 +12,7 @@ export default async (options: Props) => {
     const confirmed =
       !!options.yes ||
       (await promptly.confirm(
-        chalk.yellow(
-          "You are about to delete your config file. Are you sure?[y/n]"
-        )
+        chalk.yellow("You are about to remove your API key. Are you sure?[y/n]")
       ));
 
     if (confirmed) {
@@ -28,5 +26,5 @@ export default async (options: Props) => {
 };
 
 const print = () => {
-  success(`Config file deleted.`);
+  success(`Done`);
 };

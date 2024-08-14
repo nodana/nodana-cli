@@ -3,7 +3,6 @@ import * as client from "../../client";
 import { error, info } from "../../helpers/output";
 
 type Props = {
-  key?: string;
   sats?: number;
 };
 
@@ -12,7 +11,7 @@ export default async (options: Props) => {
     info("Creating invoice...");
 
     if (!options.sats) {
-      throw new Error("Please provide sats value (-s)");
+      throw new Error("Please provide a sats amount (-s)");
     }
 
     const config = {

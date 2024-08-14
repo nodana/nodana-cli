@@ -50,29 +50,38 @@ nodana create invoice
 
 Nodana currently supports the following services:
 
-- Phoenixd
-- Alby Hub
-- Nostr Relay (coming soon)
+- Phoenixd (phoenixd)
+- Alby Hub (alby-hub)
+- Nostr Relay (nostr-relay) (coming soon)
 
-Create a service:
+You can create services with or without a service file. A service file lets you define extra settings for your service but if the default service is ok for your needs then you don't need to reference one.
+
+Create a service (without a service file):
 
 ```
-nodana service create -c </path/to/service/file>
+nodana service create <service-name>
+  -y <auto confirm> (optional)
 ```
 
-The -c flag is a reference to a service file. It's here that you need to put your service settings:
+Create a service (with a service file)
+
+```
+nodana service create -f </path/to/service/file>
+  -y <auto confirm> (optional)
+```
+
+Here's an example of a service file:
 
 ```toml
-service = "phoenxid" # or "alby-hub"
+service = "<service-name>"
 
 [settings]
 name = "my-service"
 webhook = "https://example.com/webhook" # (phoenixd only)
-seed = "word1 word2 word3 etc" # (phoenixd only)
-auto_liquidity = "5m" # (phoenixd only)
+auto_liquidity = "5m"                   # (phoenixd only)
 ```
 
-> Save the service file with a `.toml` extension anywhere on your computer
+> Save the service file with a `.toml` extension
 
 ### Start Service
 

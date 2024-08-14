@@ -6,7 +6,7 @@ const program = new Command();
 
 program
   .name("nodana-cli")
-  .version("0.6.0", "-v, --version", "output the current version")
+  .version("0.6.1", "-v, --version", "output the current version")
   .description("Nodana CLI");
 
 program
@@ -35,10 +35,11 @@ const service = program.command("service");
 service
   .command("create")
   .description("create a service")
-  .requiredOption("-c, --config <string>", "Path to toml config file")
+  .argument("[service]", "create service without any settings")
+  .option("-f, --file <string>", "Path to toml service file")
   .option("-y, --yes", "Skip confirmation")
-  .action((options: any) => {
-    commands.createService(options);
+  .action((service, options: any) => {
+    commands.createService(service, options);
   });
 
 service

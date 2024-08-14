@@ -13,7 +13,7 @@ export default async (options: Props) => {
     const configFileExists = await fileExists();
     if (configFileExists) {
       info(
-        "Config file already exists. You can use 'nodana exit' to remove the config file."
+        "API key already exists. You can use 'nodana exit' to remove this key."
       );
       return;
     }
@@ -37,5 +37,5 @@ export default async (options: Props) => {
 };
 
 const print = () => {
-  success(`All done. You can now start creating containers.`);
+  success(`All done. You can now start creating services.`);
 };

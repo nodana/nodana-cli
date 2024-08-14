@@ -14,7 +14,7 @@ export const readFile = async (filepath?: string) => {
 
     return contents.toString();
   } catch (e) {
-    throw new Error("Config file could not be found");
+    throw e;
   }
 };
 
@@ -22,7 +22,7 @@ export const writeFile = async (content: string) => {
   try {
     return fs.writeFile(getConfigFilepath(), content);
   } catch (e) {
-    throw new Error("Config file could not be created");
+    throw e;
   }
 };
 
@@ -39,6 +39,6 @@ export const deleteFile = async () => {
   try {
     return fs.unlink(getConfigFilepath());
   } catch (e) {
-    throw new Error("Config file could not be deleted");
+    throw e;
   }
 };

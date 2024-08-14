@@ -1,6 +1,6 @@
 import { request } from "../request";
 import { readFile, writeFile } from "../helpers/file";
-import { info } from "../helpers/output";
+import { error } from "../helpers/output";
 import { KEY_DELIMITER } from "../constants";
 
 export const getAuthKey = async () => {
@@ -8,7 +8,7 @@ export const getAuthKey = async () => {
     const key = await readFile();
     return key;
   } catch (e: any) {
-    info("nodana.conf could not be found");
+    error("API key not found - have you run init command?");
     throw e;
   }
 };
@@ -31,7 +31,7 @@ export const init = async () => {
 
     return response;
   } catch (e: any) {
-    throw e;
+    throw new Error("API key could not be saved");
   }
 };
 

@@ -10,19 +10,30 @@ type Props = {
   yes?: boolean;
 };
 
-export default async (options: any) => {
+export default async (serviceType: string, options: any) => {
   try {
-    let service = "";
+    let service = serviceType;
     let config: any = {};
 
-    try {
-      const toml = await readFile(options.config);
-      const json = tomlParser.parse(toml);
+    if (options.file) {
+      try {
+        const toml = await readFile(options.file);
+        const json = tomlParser.parse(toml);
 
-      service = json.service;
-      config = json.settings || {};
-    } catch (e) {
-      throw new Error("Service file could not be found");
+        if (json.service) {
+          service = json.service;
+        }
+
+        if (json.settings) {
+          config = json.settings;
+        }
+      } catch (e) {
+        throw new Error("Service file could not be found");
+      }
+    }
+
+    if (!service) {
+      throw new Error("Service invalid.");
     }
 
     const confirmed =
