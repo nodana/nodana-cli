@@ -60,7 +60,17 @@ Create a service:
 nodana service create -c </path/to/service/file>
 ```
 
-> The create command will also start a service automatically.
+The -c flag is a reference to a service/config file. It's here that you need to put your service settings:
+
+```toml
+service = "phoenxid" # or "alby-hub"
+
+[settings]
+name = "my-service"
+webhook = "https://example.com/webhook" # (phoenixd only)
+seed = "word1 word2 word3 etc" # (phoenixd only)
+auto_liquidity = "5m" # (phoenixd only)
+```
 
 ### Start Service
 
