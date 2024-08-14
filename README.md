@@ -53,7 +53,7 @@ Nodana currently supports the following services:
 | Name           | Service Name | Options                                                |
 | -------------- | ------------ | ------------------------------------------------------ |
 | Phoenix Server | phoenixd     | -n (name), -a (autoLiquidity), -s (seed), -w (webhook) |
-| Alby Hub       | albyhub      | -n (name)                                              |
+| Alby Hub       | alby-hub     | -n (name)                                              |
 
 Create a service:
 

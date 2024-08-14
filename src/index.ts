@@ -6,7 +6,7 @@ const program = new Command();
 
 program
   .name("nodana-cli")
-  .version("0.5.8", "-v, --version", "output the current version")
+  .version("0.5.9", "-v, --version", "output the current version")
   .description("Nodana CLI");
 
 program
@@ -76,12 +76,12 @@ create
   });
 
 create
-  .command("albyhub")
+  .command("alby-hub")
   .option("-k, --key <string>", "API Key (overrides config file key)")
   .option("-n, --name <string>", "Identifier")
   .option("-y, --yes", "Skip confirmation")
   .action((options: any) => {
-    commands.createService("albyhub", options);
+    commands.createService("alby-hub", options);
   });
 
 const invoice = program.command("invoice");
