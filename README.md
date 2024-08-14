@@ -50,15 +50,14 @@ nodana create invoice
 
 Nodana currently supports the following services:
 
-| Name     | Service Name | Settings                            |
-| -------- | ------------ | ----------------------------------- |
-| Phoenixd | phoenixd     | name, auto_liquidity, seed, webhook |
-| Alby Hub | alby-hub     | name                                |
+- Phoenixd
+- Alby Hub
+- Nostr Relay (coming soon)
 
 Create a service:
 
 ```
-nodana service create <serviceName> <options>
+nodana service create -c </path/to/service/file>
 ```
 
 > The create command will also start a service automatically.
