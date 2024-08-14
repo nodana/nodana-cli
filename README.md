@@ -60,7 +60,7 @@ Create a service:
 nodana service create -c </path/to/service/file>
 ```
 
-The -c flag is a reference to a service/config file. It's here that you need to put your service settings:
+The -c flag is a reference to a service file. It's here that you need to put your service settings:
 
 ```toml
 service = "phoenxid" # or "alby-hub"
@@ -71,6 +71,8 @@ webhook = "https://example.com/webhook" # (phoenixd only)
 seed = "word1 word2 word3 etc" # (phoenixd only)
 auto_liquidity = "5m" # (phoenixd only)
 ```
+
+> Save the service file with a `.toml` extension anywhere on your computer
 
 ### Start Service
 
