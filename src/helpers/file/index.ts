@@ -13,7 +13,7 @@ export const readFile = async (filepath?: string) => {
     );
 
     return contents.toString();
-  } catch (e) {
+  } catch (e: any) {
     throw e;
   }
 };

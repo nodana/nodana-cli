@@ -5,7 +5,8 @@ import { KEY_DELIMITER } from "../constants";
 
 export const getAuthKey = async () => {
   try {
-    return readFile();
+    const key = await readFile();
+    return key;
   } catch (e: any) {
     throw new Error("API key not found - have you run init?");
   }
@@ -109,8 +110,8 @@ export const createInvoice = async (config: any) => {
 export const status = async () => {
   try {
     const key = await getAuthKey();
-
     const [id] = key.split(KEY_DELIMITER);
+
     return request._call(`/keys/${id}`, "GET", getAuthHeader(key));
   } catch (e: any) {
     throw e;
