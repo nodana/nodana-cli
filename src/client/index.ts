@@ -5,11 +5,9 @@ import { KEY_DELIMITER } from "../constants";
 
 export const getAuthKey = async () => {
   try {
-    const key = await readFile();
-    return key;
+    return readFile();
   } catch (e: any) {
-    error("API key not found - have you run init command?");
-    throw e;
+    throw new Error("API key not found - have you run init?");
   }
 };
 
@@ -36,9 +34,9 @@ export const init = async () => {
 };
 
 export const createService = async (service: string, config: any) => {
-  const key = await getAuthKey();
-
   try {
+    const key = await getAuthKey();
+
     return request._call("/containers", "POST", getAuthHeader(key), {
       service,
       config,
@@ -49,9 +47,9 @@ export const createService = async (service: string, config: any) => {
 };
 
 export const startService = async (id: string) => {
-  const key = await getAuthKey();
-
   try {
+    const key = await getAuthKey();
+
     return request._call(
       `/containers/${id}/start`,
       "POST",
@@ -64,9 +62,9 @@ export const startService = async (id: string) => {
 };
 
 export const stopService = async (id: string) => {
-  const key = await getAuthKey();
-
   try {
+    const key = await getAuthKey();
+
     return request._call(
       `/containers/${id}/stop`,
       "POST",
@@ -79,9 +77,9 @@ export const stopService = async (id: string) => {
 };
 
 export const listServices = async () => {
-  const key = await getAuthKey();
-
   try {
+    const key = await getAuthKey();
+
     return request._call("/containers", "GET", getAuthHeader(key));
   } catch (e: any) {
     throw e;
@@ -89,9 +87,9 @@ export const listServices = async () => {
 };
 
 export const deleteService = async (id: string) => {
-  const key = await getAuthKey();
-
   try {
+    const key = await getAuthKey();
+
     return request._call(`/containers/${id}`, "DELETE", getAuthHeader(key));
   } catch (e: any) {
     throw e;
@@ -99,9 +97,9 @@ export const deleteService = async (id: string) => {
 };
 
 export const createInvoice = async (config: any) => {
-  const key = await getAuthKey();
-
   try {
+    const key = await getAuthKey();
+
     return request._call("/invoices", "POST", getAuthHeader(key), config);
   } catch (e: any) {
     throw e;
@@ -109,10 +107,10 @@ export const createInvoice = async (config: any) => {
 };
 
 export const status = async () => {
-  const key = await getAuthKey();
-  const [id] = key.split(KEY_DELIMITER);
-
   try {
+    const key = await getAuthKey();
+
+    const [id] = key.split(KEY_DELIMITER);
     return request._call(`/keys/${id}`, "GET", getAuthHeader(key));
   } catch (e: any) {
     throw e;
