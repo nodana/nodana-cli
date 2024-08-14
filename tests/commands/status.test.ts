@@ -24,7 +24,7 @@ describe("commands/status", () => {
   });
 
   it("should call client status function with correct params", async () => {
-    await status({});
+    await status();
 
     expect(clientStub).to.be.calledWith();
     expect(consoleStub).to.be.called;

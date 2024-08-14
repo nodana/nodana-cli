@@ -44,7 +44,7 @@ describe("commands/service/create", () => {
   });
 
   it("should call client create function with service and config params", async () => {
-    await create({ config: "/file/path" });
+    await create("phoenixd", { file: "/file/path" });
 
     expect(clientStub).to.be.calledWith("phoenixd", { name: "my-service" });
     expect(consoleStub).to.be.called;

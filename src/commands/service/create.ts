@@ -10,7 +10,7 @@ type Props = {
   yes?: boolean;
 };
 
-export default async (serviceType: string, options: any) => {
+export default async (serviceType: string | undefined, options: any) => {
   try {
     let service = serviceType;
     let config: any = {};
