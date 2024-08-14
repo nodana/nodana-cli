@@ -3,14 +3,12 @@ import { readFile, writeFile } from "../helpers/file";
 import { info } from "../helpers/output";
 import { KEY_DELIMITER } from "../constants";
 
-export const getAuthKey = async (options: any) => {
-  if ("key" in options) return options.key;
-
+export const getAuthKey = async () => {
   try {
     const key = await readFile();
     return key;
   } catch (e: any) {
-    info("Config file not found");
+    info("nodana.conf could not be found");
     throw e;
   }
 };
@@ -26,15 +24,6 @@ export const getAuthHeader = (key: string) => {
   };
 };
 
-export const cleanOptions = (options: any) => {
-  const optionsCopy = { ...options };
-
-  delete optionsCopy.key;
-  delete optionsCopy.yes;
-
-  return optionsCopy;
-};
-
 export const init = async () => {
   try {
     const response = await request._call("/keys", "POST", {}, {});
@@ -46,21 +35,21 @@ export const init = async () => {
   }
 };
 
-export const createService = async (service: string, options: any) => {
-  const key = await getAuthKey(options);
+export const createService = async (service: string, config: any) => {
+  const key = await getAuthKey();
 
   try {
     return request._call("/containers", "POST", getAuthHeader(key), {
       service,
-      config: cleanOptions(options),
+      config,
     });
   } catch (e: any) {
     throw e;
   }
 };
 
-export const startService = async (id: string, options: any) => {
-  const key = await getAuthKey(options);
+export const startService = async (id: string) => {
+  const key = await getAuthKey();
 
   try {
     return request._call(
@@ -74,8 +63,8 @@ export const startService = async (id: string, options: any) => {
   }
 };
 
-export const stopService = async (id: string, options: any) => {
-  const key = await getAuthKey(options);
+export const stopService = async (id: string) => {
+  const key = await getAuthKey();
 
   try {
     return request._call(
@@ -89,8 +78,8 @@ export const stopService = async (id: string, options: any) => {
   }
 };
 
-export const listServices = async (options: any) => {
-  const key = await getAuthKey(options);
+export const listServices = async () => {
+  const key = await getAuthKey();
 
   try {
     return request._call("/containers", "GET", getAuthHeader(key));
@@ -99,8 +88,8 @@ export const listServices = async (options: any) => {
   }
 };
 
-export const deleteService = async (id: string, options: any) => {
-  const key = await getAuthKey(options);
+export const deleteService = async (id: string) => {
+  const key = await getAuthKey();
 
   try {
     return request._call(`/containers/${id}`, "DELETE", getAuthHeader(key));
@@ -109,23 +98,18 @@ export const deleteService = async (id: string, options: any) => {
   }
 };
 
-export const createInvoice = async (options: any) => {
-  const key = await getAuthKey(options);
+export const createInvoice = async (config: any) => {
+  const key = await getAuthKey();
 
   try {
-    return request._call(
-      "/invoices",
-      "POST",
-      getAuthHeader(key),
-      cleanOptions(options)
-    );
+    return request._call("/invoices", "POST", getAuthHeader(key), config);
   } catch (e: any) {
     throw e;
   }
 };
 
-export const status = async (options: any) => {
-  const key = await getAuthKey(options);
+export const status = async () => {
+  const key = await getAuthKey();
   const [id] = key.split(KEY_DELIMITER);
 
   try {

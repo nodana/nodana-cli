@@ -1,7 +1,6 @@
 const chalk = require("chalk");
 import * as client from "../../client";
-import { MIN_INVOICE_VALUE, MAX_INVOICE_VALUE } from "../../constants";
-import { error, info, success } from "../../helpers/output";
+import { error, info } from "../../helpers/output";
 
 type Props = {
   key?: string;
@@ -11,7 +10,16 @@ type Props = {
 export default async (options: Props) => {
   try {
     info("Creating invoice...");
-    const response = await client.createInvoice(options);
+
+    if (!options.sats) {
+      throw new Error("Please provide sats value (-s)");
+    }
+
+    const config = {
+      sats: options.sats,
+    };
+
+    const response = await client.createInvoice(config);
 
     print(response);
   } catch (e: any) {

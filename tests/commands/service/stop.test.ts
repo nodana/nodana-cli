@@ -33,12 +33,11 @@ describe("commands/service/stop", () => {
     sinon.restore();
   });
 
-  it("should call client stop function with option key if provided", async () => {
-    const key = "key-1";
+  it("should call client stop function", async () => {
     const containerId = "container-1";
-    await stop(containerId, { key });
+    await stop(containerId);
 
-    expect(clientStub).to.be.calledWith(containerId, { key });
+    expect(clientStub).to.be.calledWith(containerId);
     expect(consoleStub).to.be.called;
   });
 });

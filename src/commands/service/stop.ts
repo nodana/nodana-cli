@@ -1,15 +1,10 @@
-const chalk = require("chalk");
 import * as client from "../../client";
 import { error, info } from "../../helpers/output";
 
-type Options = {
-  key?: string;
-};
-
-export default async (id: string, options: Options) => {
+export default async (id: string) => {
   try {
     info(`Stopping service...`);
-    await client.stopService(id, options);
+    await client.stopService(id);
 
     print();
   } catch (e: any) {

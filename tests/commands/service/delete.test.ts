@@ -32,12 +32,11 @@ describe("commands/service/delete", () => {
     sinon.restore();
   });
 
-  it("should call client del function with option key if provided", async () => {
-    const key = "key-1";
+  it("should call client del function", async () => {
     const containerId = "container-1";
-    await del(containerId, { key });
+    await del(containerId, {});
 
-    expect(clientStub).to.be.calledWith(containerId, { key });
+    expect(clientStub).to.be.calledWith(containerId);
     expect(consoleStub).to.be.called;
   });
 });

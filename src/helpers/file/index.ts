@@ -2,12 +2,15 @@ import path from "path";
 const fs = require("fs").promises;
 import { CONF_FILE_NAME } from "../../constants";
 
-const getFilepath = () =>
+const getConfigFilepath = () =>
   path.join(__dirname, "..", "..", "..", "..", CONF_FILE_NAME);
 
-export const readFile = async () => {
+export const readFile = async (filepath?: string) => {
   try {
-    const contents = await fs.readFile(getFilepath(), "utf-8");
+    const contents = await fs.readFile(
+      filepath || getConfigFilepath(),
+      "utf-8"
+    );
 
     return contents.toString();
   } catch (e) {
@@ -17,7 +20,7 @@ export const readFile = async () => {
 
 export const writeFile = async (content: string) => {
   try {
-    return fs.writeFile(getFilepath(), content);
+    return fs.writeFile(getConfigFilepath(), content);
   } catch (e) {
     throw new Error("Config file could not be created");
   }
@@ -25,7 +28,7 @@ export const writeFile = async (content: string) => {
 
 export const fileExists = async () => {
   try {
-    await fs.readFile(getFilepath(), "utf-8");
+    await fs.readFile(getConfigFilepath(), "utf-8");
     return true;
   } catch (e) {
     return false;
@@ -34,7 +37,7 @@ export const fileExists = async () => {
 
 export const deleteFile = async () => {
   try {
-    return fs.unlink(getFilepath());
+    return fs.unlink(getConfigFilepath());
   } catch (e) {
     throw new Error("Config file could not be deleted");
   }

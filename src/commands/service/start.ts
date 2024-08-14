@@ -2,14 +2,10 @@ const chalk = require("chalk");
 import * as client from "../../client";
 import { error, info, success } from "../../helpers/output";
 
-type Options = {
-  key?: string;
-};
-
-export default async (id: string, options: Options) => {
+export default async (id: string) => {
   try {
     info(`Starting. Please wait...`);
-    const response = await client.startService(id, options);
+    const response = await client.startService(id);
 
     print(response);
   } catch (e: any) {

@@ -31,11 +31,9 @@ describe("commands/invoice/create", () => {
     sinon.restore();
   });
 
-  it("should call client create function with option key if provided", async () => {
+  it("should call client create function", async () => {
     const options = {
-      key: "12345",
-      value: 1000,
-      memo: "Test Memo",
+      sats: 1000,
     };
 
     await create(options);

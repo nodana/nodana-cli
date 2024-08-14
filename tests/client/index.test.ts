@@ -11,6 +11,7 @@ import * as client from "../../src/client";
 
 describe("client", () => {
   let requestStub: SinonStub;
+  let readFileStub: SinonStub;
   let writeFileStub: SinonStub;
 
   const key = "12345.12345";
@@ -18,7 +19,10 @@ describe("client", () => {
 
   beforeEach(() => {
     requestStub = sinon.stub(request, "_call");
+    readFileStub = sinon.stub(file, "readFile");
     writeFileStub = sinon.stub(file, "writeFile");
+
+    readFileStub.resolves(key);
     authHeader = client.getAuthHeader(key);
   });
 
@@ -51,10 +55,7 @@ describe("client", () => {
     });
 
     it("should call request with correct arguments", async () => {
-      const options = {
-        key,
-      };
-      await client.status(options);
+      await client.status();
 
       expect(requestStub).to.have.been.calledWith(
         "/keys/12345",
@@ -66,11 +67,10 @@ describe("client", () => {
 
   describe("service/create", () => {
     it("should call request with correct arguments", async () => {
-      const options = {
-        key,
-        seed: "word1 word2 word3",
+      const config = {
+        name: "Test Name",
       };
-      await client.createService("phoenixd", options);
+      await client.createService("phoenixd", config);
 
       expect(requestStub).to.have.been.calledWith(
         "/containers",
@@ -79,7 +79,7 @@ describe("client", () => {
         {
           service: "phoenixd",
           config: {
-            seed: "word1 word2 word3",
+            name: "Test Name",
           },
         }
       );
@@ -89,10 +89,7 @@ describe("client", () => {
   describe("service/start", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "1";
-      const options = {
-        key,
-      };
-      await client.startService(containerId, options);
+      await client.startService(containerId);
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}/start`,
@@ -106,10 +103,7 @@ describe("client", () => {
   describe("service/stop", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "1";
-      const options = {
-        key,
-      };
-      await client.stopService(containerId, options);
+      await client.stopService(containerId);
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}/stop`,
@@ -122,7 +116,7 @@ describe("client", () => {
 
   describe("service/list", () => {
     it("should call request with correct arguments", async () => {
-      await client.listServices({ key });
+      await client.listServices();
 
       expect(requestStub).to.have.been.calledWith(
         "/containers",
@@ -135,7 +129,7 @@ describe("client", () => {
   describe("service/delete", () => {
     it("should call request with correct arguments", async () => {
       const containerId = "12345";
-      await client.deleteService(containerId, { key });
+      await client.deleteService(containerId);
 
       expect(requestStub).to.have.been.calledWith(
         `/containers/${containerId}`,
@@ -148,9 +142,7 @@ describe("client", () => {
   describe("invoice/create", () => {
     it("should call request with correct arguments", async () => {
       const options = {
-        key,
-        value: 1000,
-        memo: "Test memo",
+        sats: 1000,
       };
       await client.createInvoice(options);
 
@@ -159,8 +151,7 @@ describe("client", () => {
         "POST",
         authHeader,
         {
-          value: 1000,
-          memo: "Test memo",
+          sats: 1000,
         }
       );
     });

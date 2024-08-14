@@ -9,7 +9,7 @@ type Props = {
 
 export default async (options: Props) => {
   try {
-    const response = await client.status(options);
+    const response = await client.status();
 
     print(response);
   } catch (e: any) {

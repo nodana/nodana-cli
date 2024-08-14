@@ -28,12 +28,11 @@ describe("commands/service/start", () => {
     sinon.restore();
   });
 
-  it("should call client start function with option key if provided", async () => {
-    const key = "key-1";
+  it("should call client start function", async () => {
     const containerId = "container-1";
-    await start(containerId, { key });
+    await start(containerId);
 
-    expect(clientStub).to.be.calledWith(containerId, { key });
+    expect(clientStub).to.be.calledWith(containerId);
     expect(consoleStub).to.be.called;
   });
 });

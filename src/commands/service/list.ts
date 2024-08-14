@@ -3,13 +3,9 @@ import * as client from "../../client";
 import { error, info, success } from "../../helpers/output";
 import { getDurationString } from "../../helpers/date";
 
-type Props = {
-  key?: string;
-};
-
-export default async (options: Props) => {
+export default async () => {
   try {
-    const services = await client.listServices(options);
+    const services = await client.listServices();
 
     if (services.length === 0) {
       info("No services found");

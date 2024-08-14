@@ -35,11 +35,10 @@ describe("commands/service/list", () => {
     sinon.restore();
   });
 
-  it("should call client list function with option key if provided", async () => {
-    const key = "12345";
-    await list({ key });
+  it("should call client list function", async () => {
+    await list();
 
-    expect(clientStub).to.be.calledWith({ key });
+    expect(clientStub).to.be.calledWith();
     expect(consoleStub).to.be.called;
   });
 });
