@@ -114,6 +114,19 @@ describe("client", () => {
     });
   });
 
+  describe("service/update", () => {
+    it("should call update with correct arguments", async () => {
+      const containerId = "12345";
+      await client.updateService(containerId);
+
+      expect(requestStub).to.have.been.calledWith(
+        `/containers/${containerId}`,
+        "POST",
+        authHeader
+      );
+    });
+  });
+
   describe("service/list", () => {
     it("should call request with correct arguments", async () => {
       await client.listServices();

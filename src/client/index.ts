@@ -77,6 +77,16 @@ export const stopService = async (id: string) => {
   }
 };
 
+export const updateService = async (id: string) => {
+  try {
+    const key = await getAuthKey();
+
+    return request._call(`/containers/${id}`, "POST", getAuthHeader(key), {});
+  } catch (e: any) {
+    throw e;
+  }
+};
+
 export const listServices = async () => {
   try {
     const key = await getAuthKey();

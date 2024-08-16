@@ -55,6 +55,13 @@ service
   .action(commands.stopService);
 
 service
+  .command("update")
+  .description("update a service")
+  .argument("<id>", "Id of service")
+  .option("-y, --accept", "Skip confirmation")
+  .action(commands.updateService);
+
+service
   .command("list")
   .description("list services")
   .action(commands.listServices);

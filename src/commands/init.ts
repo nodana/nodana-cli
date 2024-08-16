@@ -27,15 +27,25 @@ export default async (options: Props) => {
       ));
 
     if (confirmed) {
-      await client.init();
+      info("Creating API Key...");
+      const response = await client.init();
 
-      print();
+      print(response.key);
     }
   } catch (e: any) {
     error(e.message);
   }
 };
 
-const print = () => {
-  success(`All done. You can now start creating services.`);
+const print = (key: string) => {
+  info("Creating API Key...");
+  console.log("\n");
+  console.log(chalk.yellow("API Key: "), key);
+  info("Please make a backup of this key.");
+
+  console.log("\n");
+  console.log(
+    chalk.yellow("Create a service using: "),
+    "nodana service create <service-name>"
+  );
 };
