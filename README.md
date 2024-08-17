@@ -100,6 +100,14 @@ Stop a service.
 nodana service stop <serviceId>
 ```
 
+### Update Service
+
+Update a service to the latest supported version.
+
+```
+nodana service update <serviceId>
+```
+
 ### List Services
 
 List services.
