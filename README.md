@@ -1,3 +1,5 @@
+> This package no longer works with Nodana
+
 # Nodana CLI
 
 This is the official CLI tool for [Nodana](https://nodana.io). With this package you can spin up Bitcoin and Lightning infrastructure in the cloud without needing to worry about setting up and maintaining your own servers.
