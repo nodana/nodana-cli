@@ -5,6 +5,7 @@ pub struct ApiResponse<T> {
     pub data: Option<T>,
     pub message: Option<String>,
     pub error: Option<String>,
+    pub code: Option<String>,
     #[allow(unused)]
     #[serde(rename = "statusCode")]
     pub status: Option<u16>,

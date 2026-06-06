@@ -103,6 +103,9 @@ Examples:
     Delete {
         /// App ID
         id: String,
+        /// Skip confirmation prompt
+        #[arg(short = 'f', long)]
+        force: bool,
     },
 }
 
@@ -274,6 +277,22 @@ mod tests {
             Commands::App(args) => match args.command {
                 AppCommands::Get { id } => assert_eq!(id, "app-1"),
                 other => panic!("expected get command, got {other:?}"),
+            },
+            other => panic!("expected app command, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn app_delete_accepts_force_flag() {
+        let cli = Cli::parse_from(["nod", "app", "delete", "app-1", "-f"]);
+
+        match cli.command {
+            Commands::App(args) => match args.command {
+                AppCommands::Delete { id, force } => {
+                    assert_eq!(id, "app-1");
+                    assert!(force);
+                }
+                other => panic!("expected delete command, got {other:?}"),
             },
             other => panic!("expected app command, got {other:?}"),
         }

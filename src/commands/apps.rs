@@ -1,5 +1,6 @@
 use crate::api::NodanaClient;
 use crate::cli::{AppCommands, AppCreateArgs};
+use std::io::{self, BufRead, Write};
 
 impl AppCreateArgs {
     pub fn params(&self) -> Result<Option<serde_json::Value>, anyhow::Error> {
@@ -52,7 +53,7 @@ pub async fn run(client: &NodanaClient, command: AppCommands) -> Result<(), anyh
         AppCommands::Start { id } => start_app(client, &id).await,
         AppCommands::Stop { id } => stop_app(client, &id).await,
         AppCommands::Restart { id } => restart_app(client, &id).await,
-        AppCommands::Delete { id } => delete_app(client, &id).await,
+        AppCommands::Delete { id, force } => delete_app(client, &id, force).await,
     }
 }
 
@@ -147,8 +148,65 @@ pub async fn restart_app(client: &NodanaClient, id: &str) -> Result<(), anyhow::
     Ok(())
 }
 
-pub async fn delete_app(client: &NodanaClient, id: &str) -> Result<(), anyhow::Error> {
+pub fn confirm_delete_app<R: BufRead, W: Write>(
+    id: &str,
+    reader: &mut R,
+    writer: &mut W,
+) -> Result<bool, anyhow::Error> {
+    write!(writer, "Delete app {id}? This cannot be undone. [y/N] ")?;
+    writer.flush()?;
+
+    let mut answer = String::new();
+    reader.read_line(&mut answer)?;
+
+    Ok(matches!(answer.trim().to_lowercase().as_str(), "y" | "yes"))
+}
+
+pub async fn delete_app(client: &NodanaClient, id: &str, force: bool) -> Result<(), anyhow::Error> {
+    if !force {
+        let stdin = io::stdin();
+        let mut reader = stdin.lock();
+        let mut writer = io::stdout();
+
+        if !confirm_delete_app(id, &mut reader, &mut writer)? {
+            println!("Delete cancelled");
+            return Ok(());
+        }
+    }
+
     let result = client.delete_app(id).await?;
     println!("App {} deleted", result.id);
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::confirm_delete_app;
+    use std::io::Cursor;
+
+    #[test]
+    fn confirm_delete_app_accepts_yes() {
+        let mut input = Cursor::new("yes\n");
+        let mut output = Vec::new();
+
+        let confirmed =
+            confirm_delete_app("app-1", &mut input, &mut output).expect("confirmation to parse");
+
+        assert!(confirmed);
+        assert_eq!(
+            String::from_utf8(output).expect("prompt to be utf8"),
+            "Delete app app-1? This cannot be undone. [y/N] "
+        );
+    }
+
+    #[test]
+    fn confirm_delete_app_rejects_default() {
+        let mut input = Cursor::new("\n");
+        let mut output = Vec::new();
+
+        let confirmed =
+            confirm_delete_app("app-1", &mut input, &mut output).expect("confirmation to parse");
+
+        assert!(!confirmed);
+    }
 }

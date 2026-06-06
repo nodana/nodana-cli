@@ -177,6 +177,46 @@ async fn api_error_returns_error() {
 }
 
 #[tokio::test]
+async fn project_not_empty_error_returns_friendly_message() {
+    let mut server = Server::new_async().await;
+    let mock = server
+        .mock("POST", "/projects/prj-1/delete")
+        .match_header("authorization", "Basic OnRlc3Qta2V5")
+        .with_status(200)
+        .with_header("content-type", "application/json")
+        .with_body(
+            r#"{"message": "Request is forbidden", "error": "ForbiddenError", "code": "PROJECT_NOT_EMPTY", "statusCode": 403}"#,
+        )
+        .create();
+
+    let result = client(&server).delete_project("prj-1").await;
+
+    mock.assert();
+    let err = result.expect_err("request to fail").to_string();
+    assert_eq!(
+        err,
+        "Project cannot be deleted because it still contains apps. Delete the apps first, then try again."
+    );
+}
+
+#[tokio::test]
+async fn unknown_api_error_code_uses_generic_message() {
+    let mut server = Server::new_async().await;
+    let mock = mock_get(
+        &mut server,
+        "/projects/bad-id",
+        r#"{"message": "Not found", "error": "NotFoundError", "code": "UNKNOWN_CODE", "statusCode": 404}"#,
+    );
+
+    let result = client(&server).get_project("bad-id").await;
+
+    mock.assert();
+    let err = result.expect_err("request to fail").to_string();
+    assert!(err.contains("Not found"));
+    assert!(err.contains("NotFoundError"));
+}
+
+#[tokio::test]
 async fn non_json_http_error_preserves_status_and_body() {
     let mut server = Server::new_async().await;
     let mock = server
@@ -196,11 +236,13 @@ async fn non_json_http_error_preserves_status_and_body() {
             status,
             message,
             error_code,
+            code,
             body,
         } => {
             assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR);
             assert_eq!(message, "server returned 500");
             assert_eq!(error_code, None);
+            assert_eq!(code, None);
             assert_eq!(body.as_deref(), Some("upstream exploded"));
         }
         other => panic!("expected http error, got {other:?}"),

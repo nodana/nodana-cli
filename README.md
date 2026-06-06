@@ -98,6 +98,7 @@ nod app delete <id>
 - `fedimintd-pro`
 - `gatewayd`
 - `lnbits`
+- `opencode`
 - `vss`
 - `alby-hub`
 

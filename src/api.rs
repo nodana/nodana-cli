@@ -15,6 +15,7 @@ pub enum ApiError {
         status: StatusCode,
         message: String,
         error_code: Option<String>,
+        code: Option<String>,
         body: Option<String>,
     },
     InvalidResponse {
@@ -33,8 +34,13 @@ impl fmt::Display for ApiError {
                 status,
                 message,
                 error_code,
+                code,
                 ..
             } => {
+                if let Some(message) = friendly_error_message(code.as_deref()) {
+                    return write!(f, "{message}");
+                }
+
                 write!(f, "API request failed ({status})")?;
                 if !message.is_empty() {
                     write!(f, ": {message}")?;
@@ -54,6 +60,15 @@ impl fmt::Display for ApiError {
                 }
             }
         }
+    }
+}
+
+fn friendly_error_message(code: Option<&str>) -> Option<&'static str> {
+    match code {
+        Some("PROJECT_NOT_EMPTY") => Some(
+            "Project cannot be deleted because it still contains apps. Delete the apps first, then try again.",
+        ),
+        _ => None,
     }
 }
 
@@ -177,6 +192,7 @@ impl NodanaClient {
                     .message
                     .unwrap_or_else(|| "request failed".to_string()),
                 error_code: envelope.error,
+                code: envelope.code,
                 body,
             });
         }
@@ -194,6 +210,7 @@ impl NodanaClient {
             status,
             message: format!("server returned {}", status.as_u16()),
             error_code: None,
+            code: None,
             body,
         }
     }
