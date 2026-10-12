@@ -29,30 +29,16 @@ The CLI opens the app's sign-in page. Confirm the matching terminal code and
 authorize your chosen account. Existing browser sessions are reused, and MFA
 is required when enabled. The app stays on a connection confirmation page.
 
-The CLI and browser receive connection status through Server-Sent Events (SSE),
-without periodically polling the API. Reconnecting streams receive the current
-request status. After approval, the CLI collects its token once in a separate
-request; tokens and request secrets are never sent in event payloads or URLs.
+CLI access lets you read and manage nodes in the selected account for 30 days.
+Run `ndn login` again when you need to reconnect. Use `ndn status` to check
+your connection.
 
-CLI session tokens grant node read/write access and expire after 30 days.
-They are managed automatically, stored in the OS credential store, and are
-not displayed or made available through CLI commands or the Developers UI.
-`ndn status` checks your connection; `ndn logout` revokes this session and
-removes its local credential. If revocation cannot reach the API, logout keeps
-the credential so you can retry. Signing in again replaces the local session
-and attempts to revoke the previous one.
-
-On macOS, storage uses Keychain; Linux requires an unlocked Secret Service
-(such as GNOME Keyring or KWallet), and Windows uses Credential Manager.
 The published installer provides macOS and Linux binaries; Windows support
 requires building from source.
-The CLI does not read `NODANA_API_KEY` and offers no token argument or file
-fallback. User-created API keys remain available for direct API integrations.
 
 If the browser does not open automatically, open the link printed in your
 terminal. Login requests expire after five minutes; keep the terminal open
-while approving access. A failed or declined login keeps an existing local
-credential. Run `ndn login` again to retry.
+while approving access. Run `ndn login` again to retry.
 
 To disconnect:
 
@@ -81,12 +67,4 @@ Node creation stores the restricted password for dashboard access by default. Pa
 
 Run `ndn node --help` for command help.
 
-Interactive terminals use headings, tables, status colours, and transient
-spinners. Login clears its screen before showing the final connection summary.
-Node commands retain their results and one-time credentials in the terminal.
-Use `--plain` to disable colours, animation, and screen clearing. Piped output
-has no screen control sequences or animation; node lists use tab-separated rows.
-The CLI does not provide a JSON output mode.
-Expired local sessions start browser authorization again in an interactive
-terminal; plain or piped commands ask you to run `ndn login`. Invalid or revoked
-server credentials also ask you to reconnect, without replaying node mutations.
+Use `--plain` to disable colours, animation, and screen clearing.
