@@ -1,6 +1,6 @@
 # Nodana CLI
 
-`ndn` manages Phoenixd nodes on Nodana. The [CLI reference](https://nodana.io/docs/cli) describes every command.
+Use `ndn` to work directly with a Phoenixd node. Supply its URL and Phoenixd password to create and track invoices, send payments, inspect channels and use LNURL services. See the [CLI reference](https://nodana.io/cli-ref) for the complete command list.
 
 ## Install
 
@@ -8,63 +8,53 @@
 curl -fsSL https://nodana.io/cli | sh
 ```
 
+The installer provides macOS and Linux binaries. If `ndn` is not found, add the installation directory printed by the installer to your `PATH` and open a new terminal. Run the installer again to upgrade.
+
+## Connect to your node
+
+Set `NODANA_PHOENIXD_URL` to your node’s complete HTTPS URL, such as `https://conn-1234.nodana.app:9740`. Set `NODANA_PHOENIXD_PASSWORD` to the node password in your terminal or backend environment. The CLI reads both variables automatically. Use `--url` or `--password` to override either value for a single command. Use the limited Phoenixd password for reads and receiving payments; spending and channel closure require the full password.
+
+```bash
+ndn get-info
+ndn get-balance
+```
+
+For a daemon on the same machine, the default Phoenixd URL is `http://127.0.0.1:9740`.
+
+## Receive a payment
+
+```bash
+ndn create-invoice --amount-sat 1000 --description "Order 1042" --external-id order-1042
+
+ndn get-incoming-payment --payment-hash "$PAYMENT_HASH"
+```
+
+Save the returned `paymentHash` and share `serialized`, the BOLT11 invoice, with the payer. Check `isPaid` and `receivedSat` before fulfilling the order. `externalId` associates the invoice with an order; it does not deduplicate invoice creation.
+
+## Send and track a payment
+
+```bash
+ndn pay-invoice --invoice "$BOLT11_INVOICE"
+
+ndn get-outgoing-payment --payment-hash "$PAYMENT_HASH"
+```
+
+Use the full Phoenixd password to send funds. Check the payment result and reconcile an interrupted attempt before submitting another payment.
+
+## More commands
+
+- [Payments](https://nodana.io/cli-ref/create-invoice): invoices, offers, addresses, history and exports.
+- [Node](https://nodana.io/cli-ref/get-info): information, balance, channels, decoding and liquidity fees.
+- [LNURL](https://nodana.io/cli-ref/lnurl-pay): pay, withdraw and authenticate.
+
+Commands return Phoenixd JSON or text responses. Amount options ending in `-sat` use satoshis; history date filters use Unix milliseconds. Run `ndn --help` or `ndn create-invoice --help` for usage.
+
 ## Build from source
 
-For contributors with the Rust toolchain installed:
+With the Rust toolchain installed:
 
 ```bash
 cargo install --locked --path .
 ```
 
-## Authenticate
-
-Connect through your browser:
-
-```bash
-ndn login
-ndn status
-```
-
-The CLI opens the app's sign-in page. Confirm the matching terminal code and
-authorize your chosen account. Existing browser sessions are reused, and MFA
-is required when enabled. The app stays on a connection confirmation page.
-
-CLI access lets you read and manage nodes in the selected account for 30 days.
-Run `ndn login` again when you need to reconnect. Use `ndn status` to check
-your connection.
-
-The published installer provides macOS and Linux binaries; Windows support
-requires building from source.
-
-If the browser does not open automatically, open the link printed in your
-terminal. Login requests expire after five minutes; keep the terminal open
-while approving access. Run `ndn login` again to retry.
-
-To disconnect:
-
-```bash
-ndn logout
-```
-
-## Commands
-
-```text
-ndn login
-ndn status
-ndn logout
-ndn node list
-ndn node create [--name NAME] [--auto-liquidity 2m|5m|10m] [--full]
-ndn node get NODE_ID
-ndn node start NODE_ID
-ndn node stop NODE_ID
-ndn node restart NODE_ID
-ndn node update NODE_ID
-ndn node delete NODE_ID [--force]
-```
-
-`create` prints the node's passwords and recovery seed once. Save them securely. `delete` asks you to type the node ID unless `--force` is set.
-Node creation stores the restricted password for dashboard access by default. Pass `--full` to store the full password and enable dashboard payments.
-
-Run `ndn node --help` for command help.
-
-Use `--plain` to disable colours, animation, and screen clearing.
+Windows users can build from source.
