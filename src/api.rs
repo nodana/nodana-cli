@@ -150,7 +150,7 @@ impl NodanaClient {
         let response = self
             .send::<()>(Method::DELETE, self.node_url(Some(id), None)?, None)
             .await?;
-        if response.status() != reqwest::StatusCode::NO_CONTENT {
+        if response.status() != reqwest::StatusCode::ACCEPTED {
             bail!("Unexpected API response: {}", response.status());
         }
         Ok(())

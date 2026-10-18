@@ -1,6 +1,6 @@
 # Nodana CLI
 
-`ndn` manages Phoenixd nodes on Nodana. The [CLI reference](https://nodana.io/docs/cli) describes every command.
+`ndn` manages Phoenixd nodes on Nodana. The [CLI reference](https://nodana.io/cli-ref) describes every command.
 
 ## Install
 
@@ -62,7 +62,7 @@ ndn node update NODE_ID
 ndn node delete NODE_ID [--force]
 ```
 
-`create` prints the node's passwords and recovery seed once. Save them securely. `delete` asks you to type the node ID unless `--force` is set.
+`create` prints the node's passwords and recovery seed once. Save them securely. `delete` asks you to type the node ID unless `--force` is set, then returns once deletion is accepted. Use `ndn node list` to check when the node has been removed.
 Node creation stores the restricted password for dashboard access by default. Pass `--full` to store the full password and enable dashboard payments.
 
 Run `ndn node --help` for command help.

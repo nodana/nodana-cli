@@ -64,7 +64,7 @@ pub async fn run(client: &NodanaClient, command: NodeCommands) -> Result<()> {
                 let _spinner = output::Spinner::new("Deleting node…");
                 client.delete_node(&node_id).await?;
             }
-            output::success(&format!("Deleted node {}.", output::clean(&node_id)));
+            output::success(&format!("Deleting node {}.", output::clean(&node_id)));
         }
     }
     Ok(())
