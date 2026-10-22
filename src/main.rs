@@ -1,6 +1,9 @@
 mod api;
 mod attestation;
 mod commands;
+mod invoice_qr;
+
+use std::io::IsTerminal;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
@@ -291,10 +294,24 @@ async fn run(cli: Cli) -> Result<()> {
         .or_else(|| std::env::var("NODANA_PHOENIXD_PASSWORD").ok())
         .filter(|value| !value.is_empty())
         .ok_or_else(|| anyhow::anyhow!("Set NODANA_PHOENIXD_PASSWORD or pass --password"))?;
+    let show_invoice_qr = matches!(cli.command, Commands::CreateInvoice { .. })
+        && std::io::stdout().is_terminal()
+        && std::env::var("TERM").as_deref() != Ok("dumb");
     let result = api::PhoenixClient::new(url, password)?
         .execute(cli.command.request())
         .await?;
     println!("{result}");
+    if show_invoice_qr {
+        match invoice_qr::render(&result) {
+            Ok(Some(qr)) => println!("\nScan to pay:\n{qr}"),
+            Ok(None) => {}
+            // The invoice already exists. A display failure must not suggest that
+            // creating it failed or encourage callers to create another invoice.
+            Err(_) => eprintln!(
+                "Invoice created, but its QR code could not be displayed. Use the serialized payment request above."
+            ),
+        }
+    }
     Ok(())
 }
 

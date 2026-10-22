@@ -39,6 +39,8 @@ Run `ndn --help` to see the Payments, Node, LNURL and Misc sections. Run `ndn cr
 
 Commands print the Phoenixd response as JSON or text. Amount options ending in `-sat` use satoshis; history date filters use Unix milliseconds. Payment export returns a file path on the machine running Phoenixd.
 
+`create-invoice` also shows a QR code for the payment request when run in an interactive terminal. Scan it with a Lightning wallet to pay. Redirected or piped output contains only the JSON response.
+
 Check payment results before reporting success. Confirm incoming payments and amounts before fulfilling an order. After an interrupted outgoing payment, use `get-outgoing-payment` with its payment ID or hash before trying again.
 
 Verify a protected host with:
