@@ -1,0 +1,420 @@
+[
+  {
+    "argv": [
+      "ndn",
+      "lnurl-auth",
+      "--lnurl",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "lnurlauth"
+    ],
+    "params": {
+      "lnurl": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "lnurl-pay",
+      "--lnurl",
+      "sample & +/value",
+      "--amount-sat",
+      "123",
+      "--message",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "lnurlpay"
+    ],
+    "params": {
+      "lnurl": "sample & +/value",
+      "amountSat": "123",
+      "message": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "lnurl-withdraw",
+      "--lnurl",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "lnurlwithdraw"
+    ],
+    "params": {
+      "lnurl": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "close-channel",
+      "--channel-id",
+      "sample & +/value",
+      "--address",
+      "sample & +/value",
+      "--feerate-sat-byte",
+      "123"
+    ],
+    "method": "POST",
+    "path": [
+      "closechannel"
+    ],
+    "params": {
+      "channelId": "sample & +/value",
+      "address": "sample & +/value",
+      "feerateSatByte": "123"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "decode-invoice",
+      "--invoice",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "decodeinvoice"
+    ],
+    "params": {
+      "invoice": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "decode-offer",
+      "--offer",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "decodeoffer"
+    ],
+    "params": {
+      "offer": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "estimate-liquidity-fees",
+      "--amount-sat",
+      "123"
+    ],
+    "method": "GET",
+    "path": [
+      "estimateliquidityfees"
+    ],
+    "params": {
+      "amountSat": "123"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "get-balance"
+    ],
+    "method": "GET",
+    "path": [
+      "getbalance"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "get-info"
+    ],
+    "method": "GET",
+    "path": [
+      "getinfo"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "list-channels"
+    ],
+    "method": "GET",
+    "path": [
+      "listchannels"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "bump-fee",
+      "--feerate-sat-byte",
+      "123"
+    ],
+    "method": "POST",
+    "path": [
+      "bumpfee"
+    ],
+    "params": {
+      "feerateSatByte": "123"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "create-invoice",
+      "--description",
+      "sample & +/value",
+      "--amount-sat",
+      "123",
+      "--expiry-seconds",
+      "123",
+      "--external-id",
+      "sample & +/value",
+      "--webhook-url",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "createinvoice"
+    ],
+    "params": {
+      "description": "sample & +/value",
+      "amountSat": "123",
+      "expirySeconds": "123",
+      "externalId": "sample & +/value",
+      "webhookUrl": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "create-offer",
+      "--description",
+      "sample & +/value",
+      "--amount-sat",
+      "123"
+    ],
+    "method": "POST",
+    "path": [
+      "createoffer"
+    ],
+    "params": {
+      "description": "sample & +/value",
+      "amountSat": "123"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "export-payments",
+      "--from",
+      "123",
+      "--to",
+      "123"
+    ],
+    "method": "POST",
+    "path": [
+      "export"
+    ],
+    "params": {
+      "from": "123",
+      "to": "123"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "get-incoming-payment",
+      "--payment-hash",
+      "payment-reference"
+    ],
+    "method": "GET",
+    "path": [
+      "payments",
+      "incoming",
+      "payment-reference"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "get-ln-address"
+    ],
+    "method": "GET",
+    "path": [
+      "getlnaddress"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "get-outgoing-payment",
+      "--payment-id",
+      "payment-reference"
+    ],
+    "method": "GET",
+    "path": [
+      "payments",
+      "outgoing",
+      "payment-reference"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "get-swap-in-address"
+    ],
+    "method": "GET",
+    "path": [
+      "getswapinaddress"
+    ],
+    "params": {}
+  },
+  {
+    "argv": [
+      "ndn",
+      "list-incoming-payments",
+      "--from",
+      "123",
+      "--to",
+      "123",
+      "--limit",
+      "123",
+      "--offset",
+      "123",
+      "--all",
+      "--external-id",
+      "sample & +/value"
+    ],
+    "method": "GET",
+    "path": [
+      "payments",
+      "incoming"
+    ],
+    "params": {
+      "from": "123",
+      "to": "123",
+      "limit": "123",
+      "offset": "123",
+      "all": "true",
+      "externalId": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "list-outgoing-payments",
+      "--from",
+      "123",
+      "--to",
+      "123",
+      "--limit",
+      "123",
+      "--offset",
+      "123",
+      "--all"
+    ],
+    "method": "GET",
+    "path": [
+      "payments",
+      "outgoing"
+    ],
+    "params": {
+      "from": "123",
+      "to": "123",
+      "limit": "123",
+      "offset": "123",
+      "all": "true"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "pay-invoice",
+      "--invoice",
+      "sample & +/value",
+      "--amount-sat",
+      "123"
+    ],
+    "method": "POST",
+    "path": [
+      "payinvoice"
+    ],
+    "params": {
+      "invoice": "sample & +/value",
+      "amountSat": "123"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "pay-ln-address",
+      "--address",
+      "sample & +/value",
+      "--amount-sat",
+      "123",
+      "--message",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "paylnaddress"
+    ],
+    "params": {
+      "address": "sample & +/value",
+      "amountSat": "123",
+      "message": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "pay-offer",
+      "--offer",
+      "sample & +/value",
+      "--amount-sat",
+      "123",
+      "--message",
+      "sample & +/value"
+    ],
+    "method": "POST",
+    "path": [
+      "payoffer"
+    ],
+    "params": {
+      "offer": "sample & +/value",
+      "amountSat": "123",
+      "message": "sample & +/value"
+    }
+  },
+  {
+    "argv": [
+      "ndn",
+      "send-to-address",
+      "--amount-sat",
+      "123",
+      "--address",
+      "sample & +/value",
+      "--feerate-sat-byte",
+      "123"
+    ],
+    "method": "POST",
+    "path": [
+      "sendtoaddress"
+    ],
+    "params": {
+      "amountSat": "123",
+      "address": "sample & +/value",
+      "feerateSatByte": "123"
+    }
+  }
+]

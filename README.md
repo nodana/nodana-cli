@@ -1,70 +1,58 @@
 # Nodana CLI
 
-`ndn` manages Phoenixd nodes on Nodana. The [CLI reference](https://nodana.io/cli-ref) describes every command.
+Use `ndn` to create invoices and offers, send payments, inspect your Phoenixd node, use LNURL services, and verify a protected host. See the [CLI reference](https://nodana.io/cli-ref) for every command and option.
 
-## Install
+## Install and upgrade
 
 ```bash
 curl -fsSL https://nodana.io/cli | sh
 ```
 
-## Build from source
+Run the installer again to upgrade. It supports macOS on Apple silicon or Intel and Linux on x86-64. If `ndn` is not found, add the directory printed by the installer to your `PATH` and open a new terminal.
 
-For contributors with the Rust toolchain installed:
+With the Rust toolchain installed, build from source with `cargo install --locked --path .`. Windows users can build from source.
+
+## Connect to your node
+
+Set `NODANA_PHOENIXD_URL` to your node's complete HTTPS connection URL:
 
 ```bash
-cargo install --locked --path .
+export NODANA_PHOENIXD_URL="https://node-a1b2.nodana.app"
 ```
 
-## Authenticate
+Replace the example URL with your node's URL. For a local daemon, use `http://127.0.0.1:9740`.
 
-Connect through your browser:
+Set `NODANA_PHOENIXD_PASSWORD` in your terminal or secret configuration. Use the limited Phoenixd password for reading node information and creating invoices. Use the full password for spending, channel closure, fee bumps and LNURL authentication. Keep both passwords private.
 
-```bash
-ndn login
-ndn status
-```
-
-The CLI opens the app's sign-in page. Confirm the matching terminal code and
-authorize your chosen account. Existing browser sessions are reused, and MFA
-is required when enabled. The app stays on a connection confirmation page.
-
-CLI access lets you read and manage nodes in the selected account for 30 days.
-Run `ndn login` again when you need to reconnect. Use `ndn status` to check
-your connection.
-
-The published installer provides macOS and Linux binaries; Windows support
-requires building from source.
-
-If the browser does not open automatically, open the link printed in your
-terminal. Login requests expire after five minutes; keep the terminal open
-while approving access. Run `ndn login` again to retry.
-
-To disconnect:
+`--url` and `--password` override the environment for one command. A missing URL or password stops the command before any request is made. Attestation needs only the HTTPS URL.
 
 ```bash
-ndn logout
+ndn get-info
+ndn get-balance
+ndn create-invoice --amount-sat 1000 --description "Order 1042" --external-id order-1042
+ndn --url https://node-a1b2.nodana.app get-info
 ```
 
 ## Commands
 
-```text
-ndn login
-ndn status
-ndn logout
-ndn node list
-ndn node create [--name NAME] [--auto-liquidity 2m|5m|10m] [--full]
-ndn node get NODE_ID
-ndn node start NODE_ID
-ndn node stop NODE_ID
-ndn node restart NODE_ID
-ndn node update NODE_ID
-ndn node delete NODE_ID [--force]
+Run `ndn --help` to see the Payments, Node, LNURL and Misc sections. Run `ndn create-invoice --help` for a command's options.
+
+Commands print the Phoenixd response as JSON or text. Amount options ending in `-sat` use satoshis; history date filters use Unix milliseconds. Payment export returns a file path on the machine running Phoenixd.
+
+Check payment results before reporting success. Confirm incoming payments and amounts before fulfilling an order. After an interrupted outgoing payment, use `get-outgoing-payment` with its payment ID or hash before trying again.
+
+Verify a protected host with:
+
+```bash
+ndn attest
+ndn attest --json
 ```
 
-`create` prints the node's passwords and recovery seed once. Save them securely. `delete` asks you to type the node ID unless `--force` is set, then returns once deletion is accepted. Use `ndn node list` to check when the node has been removed.
-Node creation stores the restricted password for dashboard access by default. Pass `--full` to store the full password and enable dashboard payments.
+Attestation verifies the host's evidence locally and exits successfully only when the proof, approved image and TLS connection match. If verification fails, check the node URL and update the CLI. Contact Nodana if it still fails; keep your password and recovery material private.
 
-Run `ndn node --help` for command help.
+## Troubleshooting
 
-Use `--plain` to disable colours, animation, and screen clearing.
+- Missing connection settings: set `NODANA_PHOENIXD_URL` and `NODANA_PHOENIXD_PASSWORD`, or pass the connection flags.
+- Password rejected: check the configured Phoenixd password.
+- Access denied: use the full password if the command requires spending or other full access.
+- Connection failure: check the URL and that the node is running.

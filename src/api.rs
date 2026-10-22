@@ -1,399 +1,259 @@
-use std::{env, time::Duration};
+use std::time::Duration;
 
 use anyhow::{Context, Result, bail};
 use reqwest::{Client, Method, Response, Url};
-use serde::{Serialize, de::DeserializeOwned};
 
-use crate::models::{
-    ApiErrorResponse, CreateNodeResponse, Node, NodeUpdateResponse, NodesResponse,
-};
+use crate::commands::Request;
 
-const DEFAULT_API_ORIGIN: &str = "https://api.nodana.io";
-const API_ORIGIN_ENV: &str = "NODANA_API_ORIGIN";
-
-pub struct NodanaClient {
-    client: Client,
-    base_url: Url,
-    token: Option<String>,
+pub fn node_url(value: Option<&str>) -> Result<Url> {
+    let value = value
+        .filter(|v| !v.is_empty())
+        .context("Set NODANA_PHOENIXD_URL or pass --url")?;
+    let mut url = Url::parse(value).context("Invalid node URL")?;
+    if url.host_str().is_none()
+        || !url.username().is_empty()
+        || url.password().is_some()
+        || url.query().is_some()
+        || url.fragment().is_some()
+        || !(url.scheme() == "https"
+            || (url.scheme() == "http"
+                && matches!(url.host_str(), Some("localhost" | "127.0.0.1" | "[::1]"))))
+    {
+        bail!(
+            "Use an HTTPS node URL, or HTTP for localhost, without credentials, query or fragment"
+        );
+    }
+    if !url.path().ends_with('/') {
+        url.set_path(&format!("{}/", url.path()));
+    }
+    Ok(url)
 }
 
-impl NodanaClient {
-    pub fn from_env() -> Result<Self> {
-        let api_origin = env::var(API_ORIGIN_ENV).unwrap_or_else(|_| DEFAULT_API_ORIGIN.into());
-        Self::new(&api_origin, None)
-    }
+pub fn http_client() -> Result<Client> {
+    Ok(Client::builder()
+        .timeout(Duration::from_secs(120))
+        .redirect(reqwest::redirect::Policy::none())
+        .tls_info(true)
+        .build()?)
+}
 
-    pub fn new(api_origin: &str, token: Option<String>) -> Result<Self> {
-        let base_url = api_base_url(api_origin)?;
-        let client = Client::builder()
-            .timeout(Duration::from_secs(120))
-            .redirect(reqwest::redirect::Policy::none())
-            .build()?;
+pub struct PhoenixClient {
+    client: Client,
+    url: Url,
+    password: String,
+}
+
+impl PhoenixClient {
+    pub fn new(url: Url, password: String) -> Result<Self> {
         Ok(Self {
-            client,
-            base_url,
-            token,
+            client: http_client()?,
+            url,
+            password,
         })
     }
 
-    pub fn credential_identity(&self) -> String {
-        self.base_url.origin().ascii_serialization()
-    }
-
-    pub fn set_token(&mut self, token: Option<String>) {
-        self.token = token;
-    }
-
-    pub async fn auth_request<T: DeserializeOwned, B: Serialize + ?Sized>(
-        &self,
-        path: &str,
-        body: &B,
-    ) -> Result<T> {
-        self.request(Method::POST, self.base_url.join(path)?, Some(body))
-            .await
-    }
-
-    pub async fn session(&self) -> Result<crate::auth::SessionDetails> {
-        self.request::<_, ()>(Method::GET, self.base_url.join("auth/cli/session")?, None)
-            .await
-    }
-
-    pub async fn authorization_events<B: Serialize + ?Sized>(&self, body: &B) -> Result<Response> {
-        let response = self
-            .client
-            .post(self.base_url.join("auth/cli/events")?)
-            .header(reqwest::header::ACCEPT, "text/event-stream")
-            .timeout(Duration::from_secs(310))
-            .json(body)
-            .send()
-            .await
-            .context("Could not reach the Nodana API")?;
-        let response = Self::check_response(response).await?;
-        if !response
-            .headers()
-            .get(reqwest::header::CONTENT_TYPE)
-            .and_then(|v| v.to_str().ok())
-            .is_some_and(|v| v.starts_with("text/event-stream"))
+    pub async fn execute(&self, request: Request) -> Result<String> {
+        let mut url = self.url.clone();
         {
-            bail!("The API did not return an authorization event stream");
-        }
-        Ok(response)
-    }
-
-    pub async fn revoke(&self) -> Result<()> {
-        let response = self
-            .send::<()>(
-                Method::DELETE,
-                self.base_url.join("auth/cli/session")?,
-                None,
-            )
-            .await?;
-        if response.status() != reqwest::StatusCode::NO_CONTENT {
-            bail!("Unexpected logout response: {}", response.status());
-        }
-        Ok(())
-    }
-
-    pub async fn list_nodes(&self) -> Result<Vec<Node>> {
-        Ok(self
-            .request::<NodesResponse, ()>(Method::GET, self.node_url(None, None)?, None)
-            .await?
-            .nodes)
-    }
-
-    pub async fn create_node(
-        &self,
-        name: Option<&str>,
-        auto_liquidity: &str,
-        full: bool,
-    ) -> Result<CreateNodeResponse> {
-        #[derive(Serialize)]
-        #[serde(rename_all = "camelCase")]
-        struct CreateRequest<'a> {
-            #[serde(skip_serializing_if = "Option::is_none")]
-            name: Option<&'a str>,
-            auto_liquidity: &'a str,
-            access_mode: &'a str,
-        }
-        self.request(
-            Method::POST,
-            self.node_url(None, None)?,
-            Some(&CreateRequest {
-                name,
-                auto_liquidity,
-                access_mode: if full { "full" } else { "limited" },
-            }),
-        )
-        .await
-    }
-
-    pub async fn get_node(&self, id: &str) -> Result<Node> {
-        self.request::<Node, ()>(Method::GET, self.node_url(Some(id), None)?, None)
-            .await
-    }
-
-    pub async fn get_node_update(&self, id: &str) -> Result<NodeUpdateResponse> {
-        self.request::<NodeUpdateResponse, ()>(
-            Method::GET,
-            self.node_url(Some(id), Some("update"))?,
-            None,
-        )
-        .await
-    }
-
-    pub async fn node_action(&self, id: &str, action: &str) -> Result<Node> {
-        self.request::<Node, ()>(Method::POST, self.node_url(Some(id), Some(action))?, None)
-            .await
-    }
-
-    pub async fn delete_node(&self, id: &str) -> Result<()> {
-        let response = self
-            .send::<()>(Method::DELETE, self.node_url(Some(id), None)?, None)
-            .await?;
-        if response.status() != reqwest::StatusCode::ACCEPTED {
-            bail!("Unexpected API response: {}", response.status());
-        }
-        Ok(())
-    }
-
-    fn node_url(&self, id: Option<&str>, action: Option<&str>) -> Result<Url> {
-        let mut url = self.base_url.clone();
-        {
-            let mut segments = url
+            let mut path = url
                 .path_segments_mut()
-                .map_err(|_| anyhow::anyhow!("Invalid API URL"))?;
-            segments.pop_if_empty();
-            segments.push("nodes");
-            if let Some(id) = id {
-                if id.is_empty() || id == "." || id == ".." || id.contains('/') || id.contains('\\')
+                .map_err(|_| anyhow::anyhow!("Invalid node URL"))?;
+            path.pop_if_empty();
+            for segment in request.path {
+                if segment.is_empty()
+                    || segment == "."
+                    || segment == ".."
+                    || segment.contains(['/', '\\'])
                 {
-                    bail!("Invalid node ID");
+                    bail!("Invalid payment identifier");
                 }
-                segments.push(id);
-            }
-            if let Some(action) = action {
-                segments.push(action);
+                path.push(&segment);
             }
         }
-        Ok(url)
-    }
-
-    async fn request<T: DeserializeOwned, B: Serialize + ?Sized>(
-        &self,
-        method: Method,
-        url: Url,
-        body: Option<&B>,
-    ) -> Result<T> {
-        let response = self.send(method, url, body).await?;
-        response
-            .json()
-            .await
-            .context("Could not read the API response")
-    }
-
-    async fn send<B: Serialize + ?Sized>(
-        &self,
-        method: Method,
-        url: Url,
-        body: Option<&B>,
-    ) -> Result<Response> {
-        let mut request = self.client.request(method, url);
-        if let Some(token) = &self.token {
-            let mut value = reqwest::header::HeaderValue::from_str(&format!("Bearer {token}"))?;
-            value.set_sensitive(true);
-            request = request.header(reqwest::header::AUTHORIZATION, value);
-        }
-        if let Some(body) = body {
-            request = request.json(body);
-        }
-        let response = request
-            .send()
-            .await
-            .context("Could not reach the Nodana API")?;
-        Self::check_response(response).await
-    }
-
-    async fn check_response(response: Response) -> Result<Response> {
-        if response.status().is_success() {
-            return Ok(response);
-        }
-        let status = response.status();
-        if status == reqwest::StatusCode::UNAUTHORIZED {
-            bail!(
-                "Your CLI session has expired or is no longer valid. Run `ndn login` to reconnect."
-            );
-        }
-        let retry_after = response
-            .headers()
-            .get(reqwest::header::RETRY_AFTER)
-            .and_then(|value| value.to_str().ok())
-            .map(str::to_owned);
-        let bytes = response.bytes().await?;
-        if let Ok(error) = serde_json::from_slice::<ApiErrorResponse>(&bytes) {
-            if let Some(wait) = retry_after {
-                bail!(
-                    "API error {} ({}): {}. Retry after {wait} seconds",
-                    status,
-                    error.error.code,
-                    error.error.message
-                );
-            }
-            bail!(
-                "API error {} ({}): {}",
-                status,
-                error.error.code,
-                error.error.message
-            );
-        }
-        bail!("API request failed with HTTP {status}")
+        let builder = self
+            .client
+            .request(request.method.clone(), url)
+            .basic_auth("", Some(&self.password));
+        let builder = if request.method == Method::GET {
+            builder.query(&request.params)
+        } else {
+            builder.form(&request.params)
+        };
+        let response = builder.send().await.context("Could not reach Phoenixd")?;
+        check_status(&response)?;
+        let body = read_limited(response, 16 * 1024 * 1024).await?;
+        let text = String::from_utf8(body).context("Phoenixd returned invalid text")?;
+        // Preserve Phoenixd's response, including payment_failed and text action results.
+        Ok(match serde_json::from_str::<serde_json::Value>(&text) {
+            Ok(value) => serde_json::to_string_pretty(&value)?,
+            Err(_) => text,
+        })
     }
 }
 
-fn api_base_url(api_origin: &str) -> Result<Url> {
-    let origin = Url::parse(api_origin.trim_end_matches('/'))?;
-    if !matches!(origin.scheme(), "http" | "https")
-        || origin.host().is_none()
-        || !origin.username().is_empty()
-        || origin.password().is_some()
-        || !matches!(origin.path(), "" | "/")
-        || origin.query().is_some()
-        || origin.fragment().is_some()
-    {
-        bail!("{API_ORIGIN_ENV} must be a valid HTTP(S) origin");
+pub fn check_status(response: &Response) -> Result<()> {
+    let status = response.status();
+    if status.is_success() {
+        return Ok(());
     }
-    if origin.scheme() == "http"
-        && !matches!(origin.host_str(), Some("localhost" | "127.0.0.1" | "[::1]"))
-    {
-        bail!("{API_ORIGIN_ENV} must use HTTPS outside localhost");
+    match status.as_u16() {
+        401 => {
+            bail!("Phoenixd rejected the password. Check NODANA_PHOENIXD_PASSWORD or --password")
+        }
+        403 => bail!("Phoenixd denied access. Use the full password for commands that require it"),
+        // Do not echo arbitrary error bodies or request URLs (which may contain secrets).
+        _ => bail!("Phoenixd request failed with HTTP {status}"),
     }
-    Ok(origin.join("/v1/")?)
+}
+
+pub async fn read_limited(mut response: Response, maximum: usize) -> Result<Vec<u8>> {
+    let mut bytes = Vec::new();
+    while let Some(chunk) = response
+        .chunk()
+        .await
+        .context("Could not read the response")?
+    {
+        if chunk.len() > maximum.saturating_sub(bytes.len()) {
+            bail!("Response is too large");
+        }
+        bytes.extend_from_slice(&chunk);
+    }
+    Ok(bytes)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use tokio::{
+        io::{AsyncReadExt, AsyncWriteExt},
+        net::TcpListener,
+    };
 
     #[test]
-    fn constructs_node_urls_without_losing_v1_prefix() {
-        let client = NodanaClient::new("http://localhost:3000/", Some("token".into())).unwrap();
+    fn requires_a_safe_connection_url() {
+        for value in [
+            None,
+            Some(""),
+            Some("http://node.example.com"),
+            Some("https://:secret@node.example.com"),
+            Some("https://node.example.com?password=x"),
+            Some("https://node.example.com#fragment"),
+        ] {
+            assert!(node_url(value).is_err(), "{value:?}");
+        }
         assert_eq!(
-            client
-                .node_url(Some("node-123"), Some("restart"))
-                .unwrap()
-                .as_str(),
-            "http://localhost:3000/v1/nodes/node-123/restart"
+            node_url(Some("http://127.0.0.1:9740")).unwrap().as_str(),
+            "http://127.0.0.1:9740/"
         );
-        assert!(client.node_url(Some("../other"), None).is_err());
+        assert_eq!(
+            node_url(Some("https://node.example.com/prefix"))
+                .unwrap()
+                .path(),
+            "/prefix/"
+        );
     }
 
-    #[test]
-    fn rejects_origins_with_embedded_credentials() {
-        assert!(api_base_url("https://user:pass@example.com").is_err());
-        assert!(api_base_url("http://api.example.com").is_err());
-        assert!(api_base_url("http://127.0.0.1:3000").is_ok());
+    async fn server(response: &'static str) -> (Url, tokio::task::JoinHandle<String>) {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let url = Url::parse(&format!("http://{}/", listener.local_addr().unwrap())).unwrap();
+        let task = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut received = Vec::new();
+            let (header_end, content_length) = loop {
+                let mut buffer = [0; 2048];
+                let count = stream.read(&mut buffer).await.unwrap();
+                assert!(count > 0);
+                received.extend_from_slice(&buffer[..count]);
+                if let Some(end) = received.windows(4).position(|v| v == b"\r\n\r\n") {
+                    let headers = String::from_utf8_lossy(&received[..end]).to_ascii_lowercase();
+                    let length = headers
+                        .lines()
+                        .find_map(|line| line.strip_prefix("content-length: "))
+                        .unwrap_or("0")
+                        .parse::<usize>()
+                        .unwrap();
+                    break (end + 4, length);
+                }
+            };
+            while received.len() < header_end + content_length {
+                let mut buffer = [0; 2048];
+                let count = stream.read(&mut buffer).await.unwrap();
+                assert!(count > 0);
+                received.extend_from_slice(&buffer[..count]);
+            }
+            stream.write_all(response.as_bytes()).await.unwrap();
+            String::from_utf8(received).unwrap()
+        });
+        (url, task)
     }
 
     #[tokio::test]
-    async fn creates_node_with_bearer_session_and_parses_one_time_credentials() {
-        use tokio::{
-            io::{AsyncReadExt, AsyncWriteExt},
-            net::TcpListener,
-        };
-
-        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = tokio::spawn(async move {
-            let (mut stream, _) = listener.accept().await.unwrap();
-            let mut request = Vec::new();
-            let header_end;
-            loop {
-                let mut chunk = [0_u8; 2048];
-                let count = stream.read(&mut chunk).await.unwrap();
-                assert!(count > 0);
-                request.extend_from_slice(&chunk[..count]);
-                if let Some(position) = request.windows(4).position(|window| window == b"\r\n\r\n")
-                {
-                    header_end = position + 4;
-                    break;
-                }
-            }
-            let headers = String::from_utf8_lossy(&request[..header_end]).to_ascii_lowercase();
-            assert!(headers.starts_with("post /v1/nodes http/1.1"));
-            assert!(headers.contains("authorization: bearer test-key\r\n"));
-            let content_length: usize = headers
-                .lines()
-                .find_map(|line| line.strip_prefix("content-length: "))
-                .unwrap()
-                .parse()
-                .unwrap();
-            while request.len() - header_end < content_length {
-                let mut chunk = [0_u8; 2048];
-                let count = stream.read(&mut chunk).await.unwrap();
-                assert!(count > 0);
-                request.extend_from_slice(&chunk[..count]);
-            }
-            let body: serde_json::Value =
-                serde_json::from_slice(&request[header_end..header_end + content_length]).unwrap();
-            assert_eq!(
-                body,
-                serde_json::json!({"name":"Example","autoLiquidity":"5m","accessMode":"full"})
-            );
-            let response = r#"{"node":{"id":"node-123","name":"Example","status":"provisioning","endpointUrl":"https://example.com","failureMessage":null,"updateStatus":null},"credentials":{"seed":"words","password":"admin","restrictedPassword":"restricted"}}"#;
-            stream.write_all(format!("HTTP/1.1 202 Accepted\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}", response.len(), response).as_bytes()).await.unwrap();
-        });
-        let client =
-            NodanaClient::new(&format!("http://{address}"), Some("test-key".into())).unwrap();
-        let created = client
-            .create_node(Some("Example"), "5m", true)
+    async fn sends_basic_auth_and_url_encoded_forms_without_changing_results() {
+        let (url, task) =
+            server("HTTP/1.1 200 OK\r\nContent-Length: 25\r\n\r\n{\"type\":\"payment_failed\"}")
+                .await;
+        let result = PhoenixClient::new(url, "private".into())
+            .unwrap()
+            .execute(Request {
+                method: Method::POST,
+                path: vec!["createinvoice".into()],
+                params: vec![
+                    ("description".into(), "Order & coffee + tip".into()),
+                    ("amountSat".into(), "123".into()),
+                ],
+            })
             .await
             .unwrap();
-        assert_eq!(created.node.id, "node-123");
-        assert_eq!(created.credentials.restricted_password, "restricted");
-        server.await.unwrap();
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&result).unwrap()["type"],
+            "payment_failed"
+        );
+        let request = task.await.unwrap();
+        assert!(request.starts_with("POST /createinvoice HTTP/1.1\r\n"));
+        let headers = request.to_ascii_lowercase();
+        assert!(headers.contains("authorization: basic onbyaxzhdgu=\r\n"));
+        assert!(headers.contains("content-type: application/x-www-form-urlencoded\r\n"));
+        assert!(request.ends_with("description=Order+%26+coffee+%2B+tip&amountSat=123"));
     }
 
     #[tokio::test]
-    async fn logout_revokes_its_session_and_expiry_prompts_for_login_without_exposing_token() {
-        use tokio::{
-            io::{AsyncReadExt, AsyncWriteExt},
-            net::TcpListener,
-        };
-        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = tokio::spawn(async move {
-            for (method, response) in [
-                (
-                    "delete",
-                    "HTTP/1.1 204 No Content\r\nConnection: close\r\n\r\n",
-                ),
-                (
-                    "get",
-                    "HTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Length: 0\r\n\r\n",
-                ),
-            ] {
-                let (mut stream, _) = listener.accept().await.unwrap();
-                let mut bytes = Vec::new();
-                loop {
-                    let mut buffer = [0_u8; 4096];
-                    let count = stream.read(&mut buffer).await.unwrap();
-                    assert!(count > 0);
-                    bytes.extend_from_slice(&buffer[..count]);
-                    if bytes.windows(4).any(|v| v == b"\r\n\r\n") {
-                        break;
-                    }
-                }
-                let headers = String::from_utf8_lossy(&bytes).to_ascii_lowercase();
-                assert!(headers.starts_with(&format!("{method} /v1/auth/cli/session http/1.1")));
-                assert!(headers.contains("authorization: bearer test-session\r\n"));
-                stream.write_all(response.as_bytes()).await.unwrap();
-            }
-        });
-        let client =
-            NodanaClient::new(&format!("http://{address}"), Some("test-session".into())).unwrap();
-        client.revoke().await.unwrap();
-        let error = client.session().await.err().unwrap().to_string();
-        assert!(error.contains("ndn login"));
-        assert!(!error.contains("test-session"));
-        server.await.unwrap();
+    async fn sends_history_filters_as_query_and_preserves_text() {
+        let (url, task) = server("HTTP/1.1 200 OK\r\nContent-Length: 10\r\n\r\nplain text").await;
+        let result = PhoenixClient::new(url, "private".into())
+            .unwrap()
+            .execute(Request {
+                method: Method::GET,
+                path: vec!["payments".into(), "incoming".into()],
+                params: vec![
+                    ("all".into(), "true".into()),
+                    ("externalId".into(), "order & 1".into()),
+                ],
+            })
+            .await
+            .unwrap();
+        assert_eq!(result, "plain text");
+        assert!(
+            task.await
+                .unwrap()
+                .starts_with("GET /payments/incoming?all=true&externalId=order+%26+1 HTTP/1.1\r\n")
+        );
+    }
+
+    #[tokio::test]
+    async fn refuses_redirects_and_does_not_echo_error_secrets() {
+        let (url, task) = server("HTTP/1.1 302 Found\r\nLocation: https://other.example\r\nContent-Length: 6\r\n\r\nsecret").await;
+        let error = PhoenixClient::new(url, "private".into())
+            .unwrap()
+            .execute(Request {
+                method: Method::GET,
+                path: vec!["getinfo".into()],
+                params: vec![],
+            })
+            .await
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("302"));
+        assert!(!error.contains("secret") && !error.contains("private"));
+        task.await.unwrap();
     }
 }
