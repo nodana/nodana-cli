@@ -7,6 +7,7 @@ use std::{
 use anyhow::{Context, Result, bail, ensure};
 use base64::{Engine, engine::general_purpose::STANDARD};
 use ciborium::value::Value;
+use nd::host_policy::{self, ApprovedImage};
 use openssl::{
     bn::BigNum,
     ecdsa::EcdsaSig,
@@ -60,44 +61,13 @@ struct ReleaseIdentity {
     state_format: String,
 }
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct ApprovedImage {
-    image_id: String,
-    pcr4: String,
-    pcr7: String,
-    pcr12: String,
-}
-
-// Operator policy is independent of API/host responses.
-fn approved_images() -> Result<Vec<ApprovedImage>> {
-    if let Ok(path) = std::env::var("NODANA_APPROVED_HOST_IMAGES") {
-        #[derive(Deserialize)]
-        #[serde(deny_unknown_fields)]
-        struct Policy {
-            version: u8,
-            images: Vec<ApprovedImage>,
-        }
-        let bytes = std::fs::read(path)?;
-        ensure!(bytes.len() <= 65536, "Host policy too large");
-        let policy: Policy = serde_json::from_slice(&bytes)?;
-        ensure!(
-            policy.version == 1 && !policy.images.is_empty() && policy.images.len() <= 32,
-            "Invalid host policy"
-        );
-        return Ok(policy.images);
-    }
-    Ok(serde_json::from_str(include_str!(
-        "approved_host_images.json"
-    ))?)
-}
-
 pub async fn run(url: Url, json: bool, approval: &str) -> Result<()> {
     validate_checksum(approval)?;
     ensure!(
         url.scheme() == "https" && url.port_or_known_default() == Some(443) && url.path() == "/",
         "Attestation requires your node's HTTPS URL on port 443"
     );
+    let policy = host_policy::load().await?;
     let mut nonce = [0; 32];
     openssl::rand::rand_bytes(&mut nonce)?;
     let response = crate::api::http_client()?
@@ -122,7 +92,7 @@ pub async fn run(url: Url, json: bool, approval: &str) -> Result<()> {
         &peer,
         &nonce,
         now()?,
-        &approved_images()?,
+        &policy.images,
         approval,
     )?;
     if json {
@@ -327,7 +297,7 @@ fn verify_document(
     let image = images
         .iter()
         .find(|image| image.pcr4 == pcr4 && image.pcr7 == pcr7 && image.pcr12 == pcr12)
-        .context("This host image has not been approved. Check the node URL and update the CLI")?;
+        .context("This host image is not in Nodana's current signed approval policy. Check the node URL or contact Nodana")?;
     let bundle = field(&payload, "cabundle")?
         .as_array()
         .context("Invalid attestation chain")?;
@@ -435,14 +405,5 @@ mod tests {
     fn rejects_duplicate_keys_and_trailing_data() {
         assert!(decode(&[0xa2, 1, 2, 1, 3]).is_err());
         assert!(decode(&[0xa0, 0]).is_err());
-    }
-
-    #[test]
-    fn pins_the_release_policy() {
-        let images = approved_images().unwrap();
-        assert_eq!(images.len(), 1);
-        assert_eq!(images[0].image_id, "ami-0c57ec5affc24bced");
-        assert_ne!(images[0].pcr4, "00".repeat(48));
-        assert_ne!(images[0].pcr7, "00".repeat(48));
     }
 }

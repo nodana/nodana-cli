@@ -130,6 +130,8 @@ Select the release you expect your node to be running; a newer release's checksu
 
 Attestation verifies the host's evidence locally and exits successfully only when the proof, approved host image, running bundle checksum and TLS connection match. If verification fails, check the node URL, approved checksum and CLI version. Contact Nodana if it still fails; keep your password and recovery material private.
 
+The CLI retrieves Nodana's signed host approvals automatically. You do not need to maintain an image list. Access to Nodana's public GitHub release downloads is required; if approvals are unavailable, try again later or contact Nodana.
+
 ## Troubleshooting
 
 - Missing connection settings: set `NODANA_PHOENIXD_URL` and `NODANA_PHOENIXD_PASSWORD`, or pass the connection flags.
