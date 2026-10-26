@@ -35,13 +35,17 @@ enum NodanaCommands {
 }
 
 #[derive(clap::Args)]
+#[command(group(clap::ArgGroup::new("approval").required(true).multiple(true).args(["approve_release_sha256", "approve_host_sha256"])))]
 struct AttestationArgs {
     /// Node HTTPS URL (defaults to NODANA_PHOENIXD_URL)
     #[arg(long)]
     url: Option<String>,
-    /// Exact canonical manifest checksum approved independently of the server
+    /// Exact Phoenixd bundle manifest checksum approved independently of the server
     #[arg(long)]
-    approve_release_sha256: String,
+    approve_release_sha256: Option<String>,
+    /// Exact host release manifest checksum approved independently of Nodana's policy
+    #[arg(long)]
+    approve_host_sha256: Option<String>,
     /// Return verification results as JSON
     #[arg(long)]
     json: bool,
@@ -361,7 +365,13 @@ async fn run_attestation(args: AttestationArgs) -> Result<()> {
         .url
         .or_else(|| std::env::var("NODANA_PHOENIXD_URL").ok());
     let url = api::node_url(url.as_deref())?;
-    attestation::run(url, args.json, &args.approve_release_sha256).await
+    attestation::run(
+        url,
+        args.json,
+        args.approve_release_sha256.as_deref(),
+        args.approve_host_sha256.as_deref(),
+    )
+    .await
 }
 
 async fn run(cli: Cli) -> Result<()> {
@@ -471,10 +481,32 @@ mod tests {
         .unwrap();
         assert!(
             matches!(invocation, Invocation::Attestation(AttestationArgs {
-            json: true, approve_release_sha256, url: Some(url),
+            json: true, approve_release_sha256: Some(approve_release_sha256), url: Some(url), ..
         }) if approve_release_sha256 == approval && url == "https://node-a1b2.nodana.app")
         );
         assert!(parse_invocation(["nd", "attest"]).is_err());
+        assert!(
+            parse_invocation([
+                "nd",
+                "attest",
+                "--url",
+                "https://node-a1b2.nodana.app",
+                "--json"
+            ])
+            .is_err()
+        );
+        assert!(parse_invocation(["nd", "attest", "--approve-host-sha256", &approval]).is_ok());
+        assert!(
+            parse_invocation([
+                "nd",
+                "attest",
+                "--approve-host-sha256",
+                &approval,
+                "--approve-release-sha256",
+                &approval
+            ])
+            .is_ok()
+        );
         for invocation in [vec!["nd", "pxd"], vec!["pxd"]] {
             assert!(
                 parse_phoenixd_invocation(invocation.iter().copied().chain(["pay-invoice"]))

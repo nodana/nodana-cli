@@ -61,8 +61,48 @@ struct ReleaseIdentity {
     state_format: String,
 }
 
-pub async fn run(url: Url, json: bool, approval: &str) -> Result<()> {
-    validate_checksum(approval)?;
+#[derive(Clone, Copy)]
+struct Approvals<'a> {
+    release: Option<&'a str>,
+    host: Option<&'a str>,
+}
+
+impl Approvals<'_> {
+    fn validate(self) -> Result<()> {
+        ensure!(
+            self.release.is_some() || self.host.is_some(),
+            "Approve at least one host or node bundle checksum"
+        );
+        if let Some(value) = self.release {
+            validate_checksum(value).context("Invalid node bundle checksum")?;
+        }
+        if let Some(value) = self.host {
+            validate_checksum(value).context("Invalid host release checksum")?;
+        }
+        Ok(())
+    }
+
+    fn images(self, images: &[ApprovedImage]) -> Result<Vec<ApprovedImage>> {
+        let mut approved = Vec::new();
+        for image in images {
+            if let Some(sha) = self.host
+                && image.host_release_sha256()? != sha
+            {
+                continue;
+            }
+            approved.push(image.clone());
+        }
+        ensure!(
+            self.host.is_none() || !approved.is_empty(),
+            "The approved host release checksum does not match any image in Nodana's signed policy"
+        );
+        Ok(approved)
+    }
+}
+
+pub async fn run(url: Url, json: bool, release: Option<&str>, host: Option<&str>) -> Result<()> {
+    let approvals = Approvals { release, host };
+    approvals.validate()?;
     ensure!(
         url.scheme() == "https" && url.port_or_known_default() == Some(443) && url.path() == "/",
         "Attestation requires your node's HTTPS URL on port 443"
@@ -93,19 +133,35 @@ pub async fn run(url: Url, json: bool, approval: &str) -> Result<()> {
         &nonce,
         now()?,
         &policy.images,
-        approval,
+        approvals,
     )?;
     if json {
         println!("{}", serde_json::to_string_pretty(&result)?);
     } else {
         println!(
-            "Verified node {}: bundle {} ({})",
-            result["hostname"].as_str().unwrap_or_default(),
-            result["release"]["version"].as_str().unwrap_or_default(),
-            result["release"]["releaseSha256"]
-                .as_str()
-                .unwrap_or_default()
+            "Verified attestation for {}",
+            result["hostname"].as_str().unwrap_or_default()
         );
+        if approvals.host.is_some() {
+            println!(
+                "Host release: approved checksum matched ({})",
+                result["hostReleaseSha256"].as_str().unwrap_or_default()
+            );
+        } else {
+            println!("Host: matches Nodana's signed approvals");
+        }
+        if approvals.release.is_some() {
+            println!(
+                "Node bundle: approved checksum matched ({})",
+                result["release"]["releaseSha256"]
+                    .as_str()
+                    .unwrap_or_default()
+            );
+        } else {
+            println!(
+                "Node bundle: reported by the verified host; no bundle checksum was requested"
+            );
+        }
     }
     Ok(())
 }
@@ -124,7 +180,7 @@ fn verify_evidence(
     nonce: &[u8],
     now: u64,
     images: &[ApprovedImage],
-    approval: &str,
+    approvals: Approvals<'_>,
 ) -> Result<serde_json::Value> {
     let identity = &evidence.identity;
     ensure!(
@@ -135,11 +191,13 @@ fn verify_evidence(
             && !identity.owner_public_key.is_empty(),
         "Unexpected node identity"
     );
-    validate_checksum(approval)?;
-    ensure!(
-        identity.release.release_sha256 == approval,
-        "The running node release has not been approved"
-    );
+    approvals.validate()?;
+    if let Some(approval) = approvals.release {
+        ensure!(
+            identity.release.release_sha256 == approval,
+            "The running node release has not been approved"
+        );
+    }
     ensure!(
         hex::encode(sha256(evidence.certificate.as_bytes())) == identity.certificate_sha256,
         "Certificate digest does not match the proof"
@@ -154,9 +212,15 @@ fn verify_evidence(
     let mut binding = b"nodana-public-tls-v1\0".to_vec();
     binding.extend(canonical);
     let document = decode_base64(&evidence.attestation_document, 65536)?;
-    let (module, image) = verify_document(&document, nonce, &sha256(&binding), now, images)?;
+    let images = approvals.images(images)?;
+    let (module, image) = verify_document(&document, nonce, &sha256(&binding), now, &images)?;
+    let host_sha256 = images
+        .iter()
+        .find(|entry| entry.image_id == image)
+        .context("Missing verified host image")?
+        .host_release_sha256()?;
     Ok(
-        serde_json::json!({"verified": true, "hostname": identity.hostname, "nodeId": identity.node_id, "moduleId": module, "imageId": image,"release":identity.release}),
+        serde_json::json!({"verified": true, "hostname": identity.hostname, "nodeId": identity.node_id, "moduleId": module, "imageId": image,"hostReleaseSha256":host_sha256,"hostPinned":approvals.host.is_some(),"bundlePinned":approvals.release.is_some(),"release":identity.release}),
     )
 }
 
@@ -352,6 +416,109 @@ fn verify_document(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn real_public_evidence_supports_host_bundle_or_both_at_capture_time() {
+        let fixture: serde_json::Value =
+            serde_json::from_str(include_str!("../tests/fixtures/public-attestation.json"))
+                .unwrap();
+        let mut evidence: Evidence = serde_json::from_value(fixture["evidence"].clone()).unwrap();
+        let image: ApprovedImage = serde_json::from_value(fixture["image"].clone()).unwrap();
+        let host = image.host_release_sha256().unwrap();
+        let bundle = evidence.identity.release.release_sha256.clone();
+        let url = Url::parse(&format!("https://{}/", evidence.identity.hostname)).unwrap();
+        let peer = X509::stack_from_pem(evidence.certificate.as_bytes()).unwrap()[0]
+            .to_der()
+            .unwrap();
+        let nonce: [u8; 32] = decode_base64(fixture["nonce"].as_str().unwrap(), 32)
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let doc = decode_base64(&evidence.attestation_document, 65536).unwrap();
+        let cose = decode(&doc).unwrap();
+        let cose = match &cose {
+            Value::Tag(_, value) => value.as_ref(),
+            value => value,
+        };
+        let payload = decode(cose.as_array().unwrap()[2].as_bytes().unwrap()).unwrap();
+        let capture_time: u64 = integer(field(&payload, "timestamp").unwrap())
+            .unwrap()
+            .try_into()
+            .unwrap();
+        for approvals in [
+            Approvals {
+                release: Some(&bundle),
+                host: None,
+            },
+            Approvals {
+                release: None,
+                host: Some(&host),
+            },
+            Approvals {
+                release: Some(&bundle),
+                host: Some(&host),
+            },
+        ] {
+            let result = verify_evidence(
+                &evidence,
+                &url,
+                &peer,
+                &nonce,
+                capture_time,
+                std::slice::from_ref(&image),
+                approvals,
+            )
+            .unwrap();
+            assert_eq!(result["hostPinned"], approvals.host.is_some());
+            assert_eq!(result["bundlePinned"], approvals.release.is_some());
+            assert_eq!(result["hostReleaseSha256"], host);
+        }
+        for approvals in [
+            Approvals {
+                release: None,
+                host: None,
+            },
+            Approvals {
+                release: Some(&"f".repeat(64)),
+                host: Some(&host),
+            },
+            Approvals {
+                release: Some(&bundle),
+                host: Some(&"f".repeat(64)),
+            },
+        ] {
+            assert!(
+                verify_evidence(
+                    &evidence,
+                    &url,
+                    &peer,
+                    &nonce,
+                    capture_time,
+                    std::slice::from_ref(&image),
+                    approvals
+                )
+                .is_err()
+            );
+        }
+        // Even without a bundle pin, changing the reported bundle breaks the
+        // AWS-signed binding to this host, node, certificate and challenge.
+        evidence.identity.release.release_sha256 = "e".repeat(64);
+        assert!(
+            verify_evidence(
+                &evidence,
+                &url,
+                &peer,
+                &nonce,
+                capture_time,
+                &[image],
+                Approvals {
+                    release: None,
+                    host: Some(&host)
+                }
+            )
+            .is_err()
+        );
+    }
 
     #[test]
     fn approval_is_explicit_and_exact() {

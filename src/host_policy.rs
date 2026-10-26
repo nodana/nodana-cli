@@ -5,7 +5,7 @@ use base64::{Engine, engine::general_purpose::STANDARD};
 use openssl::{pkey::PKey, sign::Verifier};
 use serde::{Deserialize, Serialize};
 
-pub const POLICY_URL: &str = "https://github.com/nodana/nodana-phoenixd/releases/download/host-policy-v1/nodana-host-policy.json";
+pub const POLICY_URL: &str = "https://github.com/nodana/nodana-host/releases/download/host-policy-v1/nodana-host-policy.json";
 pub const SIGNING_DOMAIN: &[u8] = b"nodana-host-policy-v1\0";
 pub const MAX_POLICY_BYTES: usize = 96 * 1024;
 pub const PUBLIC_KEY: &[u8] = include_bytes!("../policy/signing-public-key.pem");
@@ -34,6 +34,21 @@ pub struct Policy {
 pub struct SignedPolicy {
     pub payload: String,
     pub signature: String,
+}
+
+impl ApprovedImage {
+    /// Canonical, versioned host release manifest, independent of the policy list.
+    pub fn host_release_manifest(&self) -> Result<Vec<u8>> {
+        Ok(serde_json::to_vec(
+            &serde_json::json!({"version": 1, "image": self}),
+        )?)
+    }
+
+    pub fn host_release_sha256(&self) -> Result<String> {
+        Ok(hex::encode(openssl::sha::sha256(
+            &self.host_release_manifest()?,
+        )))
+    }
 }
 
 impl Policy {
@@ -187,6 +202,42 @@ mod tests {
     use super::*;
     use openssl::sign::Signer;
 
+    #[test]
+    fn host_checksum_pins_measurements_and_provenance_independently_of_policy_changes() {
+        let reference: serde_json::Value =
+            serde_json::from_str(include_str!("../tests/fixtures/host-release.json")).unwrap();
+        let image: ApprovedImage =
+            serde_json::from_value(reference["manifest"]["image"].clone()).unwrap();
+        assert_eq!(
+            image.host_release_sha256().unwrap(),
+            reference["sha256"].as_str().unwrap()
+        );
+        assert_eq!(
+            serde_json::from_slice::<serde_json::Value>(&image.host_release_manifest().unwrap())
+                .unwrap(),
+            reference["manifest"]
+        );
+        let mut changed = image.clone();
+        changed.pcr7 = "ee".repeat(48);
+        assert_ne!(
+            changed.host_release_sha256().unwrap(),
+            image.host_release_sha256().unwrap()
+        );
+        let mut changed = image.clone();
+        changed.release.as_mut().unwrap()["sourceCommit"] = "e".repeat(40).into();
+        assert_ne!(
+            changed.host_release_sha256().unwrap(),
+            image.host_release_sha256().unwrap()
+        );
+        let mut policy = policy();
+        policy.images.push(image.clone());
+        policy.serial += 1;
+        assert_eq!(
+            policy.images[1].host_release_sha256().unwrap(),
+            image.host_release_sha256().unwrap()
+        );
+    }
+
     fn policy() -> Policy {
         Policy {
             version: 1,
@@ -281,7 +332,7 @@ mod tests {
     #[test]
     fn reviewed_production_measurements_are_valid_policy_input() {
         let input: serde_json::Value =
-            serde_json::from_str(include_str!("../policy/host-images.json")).unwrap();
+            serde_json::from_str(include_str!("../tests/fixtures/host-images.json")).unwrap();
         let mut value = policy();
         value.images = serde_json::from_value(input["images"].clone()).unwrap();
         value.validate().unwrap();

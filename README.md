@@ -115,22 +115,29 @@ nd update-node NODE_ID --release-sha256 APPROVED_RELEASE_SHA256
 
 You can also update a hosted node in the [Nodana dashboard](https://app.nodana.io).
 
-### Verify the host
+### Verify a host, node bundle, or both
 
-For a node on a protected Nodana host, supply its HTTPS URL and the checksum of the node bundle release you want to verify. No Phoenixd password is required.
+Use `nd attest` with your node's HTTPS URL (or `NODANA_PHOENIXD_URL`) and at least one independently approved checksum. No Phoenixd password is required.
 
-Choose the exact bundle version you intend to trust in [nodana-phoenixd releases](https://github.com/nodana/nodana-phoenixd/releases) and review its release notes. Under **Assets**, download `release-sha256.txt` and copy its checksum into `APPROVED_RELEASE_SHA256` below. This is the canonical manifest checksum: 64 lowercase hexadecimal characters. `SHA256SUMS` contains checksums of the downloadable files and is not the value to pass to this command.
+For the bundle, select the exact `bundle-v...` version in [nodana-phoenixd releases](https://github.com/nodana/nodana-phoenixd/releases), review the notes and download `release-sha256.txt`. Use its checksum for `--approve-release-sha256`; `SHA256SUMS` identifies different downloadable files.
+
+For the host, open the [host approval release](https://github.com/nodana/nodana-host/releases/tag/host-policy-v1). Review the desired `host-release-<AMI_ID>.json` manifest and obtain its checksum from `host-release-<AMI_ID>-sha256.txt`. It pins that host's boot measurements and provenance, independently of later additions to Nodana's host approval list.
 
 ```bash
-nd attest --approve-release-sha256 APPROVED_RELEASE_SHA256
-nd attest --approve-release-sha256 APPROVED_RELEASE_SHA256 --json
+# Bundle only
+nd attest --approve-release-sha256 APPROVED_BUNDLE_SHA256
+
+# Host only
+nd attest --approve-host-sha256 APPROVED_HOST_SHA256
+
+# Both
+nd attest --approve-host-sha256 APPROVED_HOST_SHA256 \
+  --approve-release-sha256 APPROVED_BUNDLE_SHA256 --json
 ```
 
-Select the release you expect your node to be running; a newer release's checksum will not match a node that has not been updated.
+Every mode verifies the AWS proof, freshness, node/TLS binding and an approved host image. Bundle-only mode trusts Nodana's signed host approvals. Host-only mode pins the host but does not independently approve its reported bundle release. Supplying both checksums pins both releases. JSON results include `hostPinned`, `bundlePinned` and `hostReleaseSha256`.
 
-Attestation verifies the host's evidence locally and exits successfully only when the proof, approved host image, running bundle checksum and TLS connection match. If verification fails, check the node URL, approved checksum and CLI version. Contact Nodana if it still fails; keep your password and recovery material private.
-
-The CLI retrieves Nodana's signed host approvals automatically. You do not need to maintain an image list. Access to Nodana's public GitHub release downloads is required; if approvals are unavailable, try again later or contact Nodana.
+The CLI downloads the signed host approvals automatically from public GitHub release assets. If verification fails, check the URL and intended checksums, then contact Nodana if needed. Do not send passwords or recovery material.
 
 ## Troubleshooting
 

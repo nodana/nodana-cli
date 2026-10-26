@@ -15,9 +15,12 @@ struct Args {
     /// Verify a signed policy without using a private key
     #[arg(long)]
     check: Option<PathBuf>,
-    #[arg(long, required_unless_present = "check")]
+    /// Export canonical per-image manifests and checksum files without signing
+    #[arg(long, requires = "input")]
+    export_host_releases: Option<PathBuf>,
+    #[arg(long, required_unless_present_any = ["check", "export_host_releases"])]
     output: Option<PathBuf>,
-    #[arg(long, required_unless_present = "check")]
+    #[arg(long, required_unless_present_any = ["check", "export_host_releases"])]
     private_key_env: Option<String>,
 }
 
@@ -35,6 +38,12 @@ fn main() -> Result<()> {
     let policy: Policy =
         serde_json::from_slice(&fs::read(args.input.context("Policy input required")?)?)?;
     policy.validate()?;
+    if let Some(directory) = args.export_host_releases {
+        export_host_releases(&policy, &directory)?;
+        if args.output.is_none() && args.private_key_env.is_none() {
+            return Ok(());
+        }
+    }
     let private = std::env::var(
         args.private_key_env
             .context("Private-key environment variable required")?,
@@ -66,5 +75,29 @@ fn main() -> Result<()> {
         policy.serial,
         policy.images.len()
     );
+    Ok(())
+}
+
+fn export_host_releases(policy: &Policy, directory: &std::path::Path) -> Result<()> {
+    fs::create_dir_all(directory)?;
+    for image in &policy.images {
+        let name = format!("host-release-{}", image.image_id);
+        let manifest = image.host_release_manifest()?;
+        let checksum = image.host_release_sha256()?;
+        for (name, bytes) in [
+            (format!("{name}.json"), manifest),
+            (
+                format!("{name}-sha256.txt"),
+                format!("{checksum}\n").into_bytes(),
+            ),
+        ] {
+            fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(directory.join(name))?
+                .write_all(&bytes)?;
+        }
+        println!("Host release {}: {checksum}", image.image_id);
+    }
     Ok(())
 }
